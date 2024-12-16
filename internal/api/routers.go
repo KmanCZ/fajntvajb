@@ -4,11 +4,15 @@ import (
 	"net/http"
 )
 
-func New() *http.ServeMux {
+func New() (*http.ServeMux, error) {
 	r := http.NewServeMux()
-	handlers := NewHandlers()
+	handlers, err := NewHandlers()
+	if err != nil {
+		return nil, err
+	}
 
+	r.HandleFunc("GET /auth", handlers.handleAuthPage)
 	r.HandleFunc("GET /", handlers.handleLandingPage)
 
-	return r
+	return r, nil
 }

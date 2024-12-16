@@ -9,24 +9,34 @@ import (
 
 type handlers struct {
 	files fs.FS
+	tmpl  *template.Template
 }
 
-func NewHandlers() handlers {
-	res := handlers{
-		files: os.DirFS("."),
+func NewHandlers() (*handlers, error) {
+	files := os.DirFS(".")
+	tmpl, err := template.New("layout.html").ParseFS(files, "templates/*.html", "templates/*/*.html")
+	if err != nil {
+		return nil, err
 	}
-	return res
+
+	res := handlers{
+		files: files,
+		tmpl:  tmpl,
+	}
+	return &res, nil
 }
 
 func (handlers *handlers) handleLandingPage(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.New("").ParseFS(handlers.files, "templates/*")
-	if err != nil {
-		http.Error(w, "Something went wrong", 500)
-	}
+	//TODO: handle errors
+	handlers.tmpl.ExecuteTemplate(w, "index.html", nil)
+}
 
-	tmpl.ExecuteTemplate(w, "index.html", struct {
+func (handlers *handlers) handleAuthPage(w http.ResponseWriter, r *http.Request) {
+	//TODO: handle errors
+	handlers.tmpl.ExecuteTemplate(w, "profile.html", struct {
 		Name string
 	}{
-		Name: "John Doe",
+		Name: "john doe",
 	})
+
 }
