@@ -15,6 +15,7 @@ func main() {
 	}
 
 	fmt.Println("Listening on port 8080")
+	fmt.Println("Server can be accesed on http://localhost:8080")
 	err := server.ListenAndServe()
 	if err != nil {
 		fmt.Printf("Something went wrong: %s", err.Error())
