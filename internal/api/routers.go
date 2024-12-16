@@ -6,8 +6,9 @@ import (
 
 func New() *http.ServeMux {
 	r := http.NewServeMux()
+	handlers := NewHandlers()
 
-	r.HandleFunc("GET /", handleLandingPage)
+	r.HandleFunc("GET /", handlers.handleLandingPage)
 
 	return r
 }

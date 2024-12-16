@@ -2,14 +2,24 @@ package api
 
 import (
 	"html/template"
+	"io/fs"
 	"net/http"
 	"os"
 )
 
-func handleLandingPage(w http.ResponseWriter, r *http.Request) {
-	//TODO: move up so it can be open only once
-	files := os.DirFS(".")
-	tmpl, err := template.New("").ParseFS(files, "templates/*")
+type handlers struct {
+	files fs.FS
+}
+
+func NewHandlers() handlers {
+	res := handlers{
+		files: os.DirFS("."),
+	}
+	return res
+}
+
+func (handlers *handlers) handleLandingPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.New("").ParseFS(handlers.files, "templates/*")
 	if err != nil {
 		http.Error(w, "Something went wrong", 500)
 	}
