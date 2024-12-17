@@ -1,38 +1,36 @@
 package api
 
 import (
-	"fajntvajb/internal/files"
-	"html/template"
+	"fajntvajb/internal/files/templates"
 	"net/http"
 )
 
 type handlers struct {
-	tmpl *template.Template
+	tmpl *templates.Template
 }
 
 func NewHandlers() (*handlers, error) {
-	tmpl, err := template.New("layout.html").ParseFS(files.Files, "templates/*/*.html")
+	templates, err := templates.New()
 	if err != nil {
 		return nil, err
 	}
 
 	res := handlers{
-		tmpl: tmpl,
+		tmpl: templates,
 	}
 	return &res, nil
 }
 
 func (handlers *handlers) handleLandingPage(w http.ResponseWriter, r *http.Request) {
 	//TODO: handle errors
-	handlers.tmpl.ExecuteTemplate(w, "index.html", nil)
+	handlers.tmpl.Render(w, "index", nil)
 }
 
 func (handlers *handlers) handleAuthPage(w http.ResponseWriter, r *http.Request) {
 	//TODO: handle errors
-	handlers.tmpl.ExecuteTemplate(w, "profile.html", struct {
+	handlers.tmpl.Render(w, "auth", struct {
 		Name string
 	}{
 		Name: "john doe",
 	})
-
 }
