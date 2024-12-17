@@ -22,6 +22,7 @@ func New() (*http.ServeMux, error) {
 
 	r.HandleFunc("GET /auth", handlers.handleAuthPage)
 	r.HandleFunc("GET /", handlers.handleLandingPage)
+	r.HandleFunc("GET /test", handlers.handleHTMXTest)
 
 
 	return r, nil

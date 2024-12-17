@@ -43,6 +43,13 @@ func (handlers *handlers) handleAuthPage(w http.ResponseWriter, r *http.Request)
 	}
 }
 
+func (handlers *handlers) handleHTMXTest(w http.ResponseWriter, r *http.Request) {
+	_, err := w.Write([]byte("test"))
+	if err != nil {
+		handleError(w)
+	}
+}
+
 func handleError(w http.ResponseWriter) {
 	file, err := files.Files.ReadFile("templates/pages/error.html")
 	if err != nil {
