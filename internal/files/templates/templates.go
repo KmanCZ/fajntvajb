@@ -21,9 +21,15 @@ func New() (*Template, error) {
 	}, nil
 }
 
-func (t *Template) Render(w io.Writer, name string, data interface{}) {
-	//TODO: handle errors
-    tmpl := template.Must(t.templates.Clone())
-    tmpl = template.Must(tmpl.ParseFS(files.Files, "templates/pages/"+name+".html"))
-    tmpl.ExecuteTemplate(w, name+".html", data)
+func (t *Template) Render(w io.Writer, name string, data interface{}) error {
+    tmpl, err := t.templates.Clone()
+	if err != nil {
+		return err
+	}
+    tmpl, err = tmpl.ParseFS(files.Files, "templates/pages/"+name+".html")
+	if err != nil {
+		return err
+	}
+    return tmpl.ExecuteTemplate(w, name+".html", data)
+
 }
