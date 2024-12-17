@@ -30,7 +30,9 @@ func (handlers *handlers) handleAuthPage(w http.ResponseWriter, r *http.Request)
 	//TODO: handle errors
 	handlers.tmpl.Render(w, "auth", struct {
 		Name string
+		Auth bool
 	}{
 		Name: "john doe",
+		Auth: true,
 	})
 }
