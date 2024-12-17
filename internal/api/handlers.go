@@ -1,27 +1,23 @@
 package api
 
 import (
+	"fajntvajb/internal/files"
 	"html/template"
-	"io/fs"
 	"net/http"
-	"os"
 )
 
 type handlers struct {
-	files fs.FS
-	tmpl  *template.Template
+	tmpl *template.Template
 }
 
 func NewHandlers() (*handlers, error) {
-	files := os.DirFS(".")
-	tmpl, err := template.New("layout.html").ParseFS(files, "templates/*.html", "templates/*/*.html")
+	tmpl, err := template.New("layout.html").ParseFS(files.Files, "templates/*/*.html")
 	if err != nil {
 		return nil, err
 	}
 
 	res := handlers{
-		files: files,
-		tmpl:  tmpl,
+		tmpl: tmpl,
 	}
 	return &res, nil
 }

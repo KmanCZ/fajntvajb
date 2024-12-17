@@ -10,6 +10,7 @@ func main() {
 	router, err := api.New()
 	if err != nil {
 		fmt.Printf("Something went wrong: %s", err.Error())
+		return
 	}
 
 	server := http.Server{
