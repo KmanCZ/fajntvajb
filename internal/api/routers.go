@@ -23,11 +23,16 @@ func New() (*http.ServeMux, error) {
 		return nil, err
 	}
 
+	// Serve static files from /static
 	r.Handle("GET /static/", http.StripPrefix("/static", http.FileServerFS(static)))
 
+	// Define page routes
 	r.HandleFunc("GET /auth", handlers.handleAuthPage)
 	r.HandleFunc("GET /", handlers.handleLandingPage)
-	r.HandleFunc("GET /test", handlers.handleHTMXTest)
+
+	// Define API routes
+	r.HandleFunc("POST /api/click", handlers.handleHTMXPostTest)
+	r.HandleFunc("GET /api/test", handlers.handleHTMXTest)
 
 	return r, nil
 }
