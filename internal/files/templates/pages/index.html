@@ -1,0 +1,15 @@
+{{template "layout.html" .}}
+
+{{define "title"}}Welcome{{end}}
+
+{{define "content"}}
+<h1>Hello to fajntvajb!</h1>
+
+<div x-data="{ count: 0 }">
+    <button x-on:click="count++">Increment</button>
+    <p x-text="count"></p>
+</div>
+
+<button hx-get="/test" hx-target="#res" hx-swap="beforeend">Test</button>
+<div id="res"></div>
+{{end}}
