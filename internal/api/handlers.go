@@ -42,17 +42,38 @@ func (handlers *handlers) handleLandingPage(w http.ResponseWriter, r *http.Reque
 }
 
 func (handlers *handlers) handleAuthPage(w http.ResponseWriter, r *http.Request) {
-	err := handlers.tmpl.Render(w, "auth", struct {
+
+	rows, err := handlers.db.GetRows()
+	if err != nil {
+		handleError(w, err)
+		return
+	}
+	err = handlers.tmpl.Render(w, "auth", struct {
 		Name string
 		Auth bool
+		Rows []string
 	}{
 		Name: "john doe",
 		Auth: true,
+		Rows: rows,
 	})
 
 	if err != nil {
 		handleError(w, err)
 	}
+}
+
+func (handlers *handlers) handleHTMXPostTest(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		return
+	}
+	value := r.FormValue("name")
+	err = handlers.db.InsertRow(value)
+	if err != nil {
+		return
+	}
+	w.Write([]byte("<li>" + value + "</li>"))
 }
 
 func (handlers *handlers) handleHTMXTest(w http.ResponseWriter, r *http.Request) {

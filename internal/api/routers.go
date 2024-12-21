@@ -29,5 +29,7 @@ func New() (*http.ServeMux, error) {
 	r.HandleFunc("GET /", handlers.handleLandingPage)
 	r.HandleFunc("GET /test", handlers.handleHTMXTest)
 
+	r.HandleFunc("POST /click", handlers.handleHTMXPostTest)
+
 	return r, nil
 }
