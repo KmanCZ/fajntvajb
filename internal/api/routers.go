@@ -31,7 +31,6 @@ func New() (*http.ServeMux, error) {
 	r.HandleFunc("GET /", handlers.handleLandingPage)
 
 	// Define API routes
-	r.HandleFunc("POST /api/click", handlers.handleHTMXPostTest)
 	r.HandleFunc("GET /api/test", handlers.handleHTMXTest)
 
 	return r, nil

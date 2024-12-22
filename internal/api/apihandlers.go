@@ -5,21 +5,6 @@ import (
 	"net/http"
 )
 
-func (handlers *handlers) handleHTMXPostTest(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		handleAPIError(w, err)
-	}
-	value := r.FormValue("name")
-	if err != nil {
-		handleAPIError(w, err)
-	}
-	_, err = w.Write([]byte("<li>" + value + "</li>"))
-	if err != nil {
-		handleAPIError(w, err)
-	}
-}
-
 func (handlers *handlers) handleHTMXTest(w http.ResponseWriter, r *http.Request) {
 	_, err := w.Write([]byte("test"))
 	if err != nil {
