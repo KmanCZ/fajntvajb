@@ -1,15 +1,21 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/static/css/style.css">
-        <script src="/static/js/htmx.min.js"></script>
-        <script defer src="/static/js/alpinejs.min.js"></script>
-        <title>fajntvab - {{block "title" .}}{{end}}</title>
-    </head>
-    <body>
-        {{template "navbar.html" .}}
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/js/htmx.min.js"></script>
+    <script defer src="/static/js/alpinejs.min.js"></script>
+    <title>fajntvab - {{block "title" .}}{{end}}</title>
+</head>
+
+<body class="h-screen flex flex-col justify-between">
+    {{template "navbar.html" .}}
+    <main class="flex-1">
         {{block "content" .}}{{end}}
-    </body>
+    </main>
+    {{template "footer.html" .}}
+</body>
+
 </html>

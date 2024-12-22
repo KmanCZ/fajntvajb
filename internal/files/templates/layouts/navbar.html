@@ -1,9 +1,13 @@
-<nav>
-    {{if .Auth}}
-        {{.Name}}
-    {{end}}
-    <ul>
-        <li><a href="/">fajntvajb</a></li>
+<nav class="flex justify-between p-2 bg-white/60 backdrop-blur shadow sticky top-0 h-fit">
+    <a href="/" class="text-xl italic font-serif">fajntvajb</a>
+    <ul class="flex gap-2">
+        <li class="mr-2"><a href="/vajbs">Explore</a></li>
+        {{if .Auth}}
         <li><a href="/auth">Home</a></li>
+        <li><a href="/auth/logout">Logout</a></li>
+        {{else}}
+        <li><a href="/auth">Login</a></li>
+        <li><a href="/auth/register">Register</a></li>
+        {{end}}
     </ul>
 </nav>
