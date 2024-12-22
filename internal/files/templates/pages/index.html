@@ -3,13 +3,64 @@
 {{define "title"}}Welcome{{end}}
 
 {{define "content"}}
-<h1>Hello to fajntvajb!</h1>
+<header class="flex flex-col items-center justify-center gap-10 w-full h-screen p-10 bg-gray-700">
+    <h1 class="w-fit text-8xl text-slate-200">Welcome to fajntvajb!</h1>
+    <p class="text-slate-300 text-4xl">The best place to find your favorite vajbs!</p>
+    <a href="/vajbs"
+        class="w-fit text-slate-300 text-2xl bg-gray-600 py-2 px-4 rounded-xl shadow-lg hover:shadow hover:bg-gray-500">
+        Start exploring vajbs now!
+    </a>
+    <a href="#info" class="text-slate-300 text-xl hover:underline">More info</a>
+</header>
 
-<div x-data="{ count: 0 }">
-    <button x-on:click="count++">Increment</button>
-    <p x-text="count"></p>
-</div>
-
-<button hx-get="/api/test" hx-target="#res" hx-swap="beforeend">Test</button>
-<div id="res"></div>
+<section id="info" class="flex px-56 py-5 items-center justify-center gap-10">
+    <div class="bg-gray-100 rounded-2xl p-7 shadow-lg">
+        <h3 class="text-xl mb-3">What is vajb?</h3>
+        <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta sunt tempora impedit numquam aliquam
+            vitae
+            rem dignissimos adipisci, beatae deleniti quibusdam itaque harum sit! Hic dolores iste autem amet eum.
+            Impedit, nam delectus perferendis esse earum aliquam asperiores doloribus cupiditate voluptas velit sed,
+            recusandae quam suscipit obcaecati rerum unde fuga ut quod pariatur atque inventore maxime aut.
+            Similique,
+            voluptate dicta!
+            Tempore repellat ratione obcaecati distinctio qui nisi exercitationem sunt. At reprehenderit hic quia
+            laborum nisi accusantium et, ullam odio magnam beatae, dolor eligendi eos? Blanditiis suscipit ipsa
+            expedita. Labore, enim.
+            Temporibus enim similique voluptas ipsum dicta ratione dignissimos ipsa assumenda quisquam officia
+            provident
+            recusandae quidem consequatur, voluptate est tenetur exercitationem sed deleniti eligendi officiis
+            magnam,
+            perspiciatis ut odio laborum? Laudantium?
+            Eum veritatis quae ea alias dolores provident ipsum fuga. Quisquam illo vero distinctio, incidunt, ipsam
+            consectetur iusto laudantium voluptatum unde enim iste molestiae quia magnam adipisci, odio quis.
+            Corporis,
+            voluptatibus.
+        </p>
+    </div>
+    <div class="bg-gray-100 rounded-2xl p-7 shadow-lg">
+        <h3 class="text-xl mb-3">What is fajntvajb?</h3>
+        <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta sunt tempora impedit numquam aliquam
+            vitae
+            rem dignissimos adipisci, beatae deleniti quibusdam itaque harum sit! Hic dolores iste autem amet eum.
+            Impedit, nam delectus perferendis esse earum aliquam asperiores doloribus cupiditate voluptas velit sed,
+            recusandae quam suscipit obcaecati rerum unde fuga ut quod pariatur atque inventore maxime aut.
+            Similique,
+            voluptate dicta!
+            Tempore repellat ratione obcaecati distinctio qui nisi exercitationem sunt. At reprehenderit hic quia
+            laborum nisi accusantium et, ullam odio magnam beatae, dolor eligendi eos? Blanditiis suscipit ipsa
+            expedita. Labore, enim.
+            Temporibus enim similique voluptas ipsum dicta ratione dignissimos ipsa assumenda quisquam officia
+            provident
+            recusandae quidem consequatur, voluptate est tenetur exercitationem sed deleniti eligendi officiis
+            magnam,
+            perspiciatis ut odio laborum? Laudantium?
+            Eum veritatis quae ea alias dolores provident ipsum fuga. Quisquam illo vero distinctio, incidunt, ipsam
+            consectetur iusto laudantium voluptatum unde enim iste molestiae quia magnam adipisci, odio quis.
+            Corporis,
+            voluptatibus.
+        </p>
+    </div>
+</section>
 {{end}}
