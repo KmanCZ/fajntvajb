@@ -13,6 +13,20 @@ func (handlers *handlers) handleLandingPage(w http.ResponseWriter, r *http.Reque
 	}
 }
 
+func (handlers *handlers) handleRegisterPage(w http.ResponseWriter, _ *http.Request) {
+	err := handlers.tmpl.Render(w, "register", nil)
+	if err != nil {
+		handleWebError(w, err)
+	}
+}
+
+func (handlers *handlers) handleLoginPage(w http.ResponseWriter, _ *http.Request) {
+	err := handlers.tmpl.Render(w, "login", nil)
+	if err != nil {
+		handleWebError(w, err)
+	}
+}
+
 func (handlers *handlers) handleAuthPage(w http.ResponseWriter, r *http.Request) {
 	err := handlers.tmpl.Render(w, "auth", struct {
 		Name string

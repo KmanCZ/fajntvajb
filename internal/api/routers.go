@@ -28,6 +28,8 @@ func New() (*http.ServeMux, error) {
 
 	// Define page routes
 	r.HandleFunc("GET /auth", handlers.handleAuthPage)
+	r.HandleFunc("GET /auth/register", handlers.handleRegisterPage)
+	r.HandleFunc("GET /auth/login", handlers.handleLoginPage)
 	r.HandleFunc("GET /", handlers.handleLandingPage)
 
 	// Define API routes
