@@ -10,9 +10,11 @@
     <title>fajntvab - {{block "title" .}}{{end}}</title>
 </head>
 
-<body class="h-dvh relative">
+<body class="h-screen flex flex-col justify-between">
     {{template "navbar.html" .}}
-    {{block "content" .}}{{end}}
+    <main class="flex-1">
+        {{block "content" .}}{{end}}
+    </main>
     {{template "footer.html" .}}
 </body>
 
