@@ -14,20 +14,12 @@ func (handlers *handlers) handleLandingPage(w http.ResponseWriter, r *http.Reque
 }
 
 func (handlers *handlers) handleAuthPage(w http.ResponseWriter, r *http.Request) {
-
-	rows, err := handlers.db.GetRows()
-	if err != nil {
-		handleWebError(w, err)
-		return
-	}
-	err = handlers.tmpl.Render(w, "auth", struct {
+	err := handlers.tmpl.Render(w, "auth", struct {
 		Name string
 		Auth bool
-		Rows []string
 	}{
 		Name: "john doe",
 		Auth: true,
-		Rows: rows,
 	})
 
 	if err != nil {

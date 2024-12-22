@@ -11,7 +11,6 @@ func (handlers *handlers) handleHTMXPostTest(w http.ResponseWriter, r *http.Requ
 		handleAPIError(w, err)
 	}
 	value := r.FormValue("name")
-	err = handlers.db.InsertRow(value)
 	if err != nil {
 		handleAPIError(w, err)
 	}
