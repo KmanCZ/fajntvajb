@@ -3,6 +3,7 @@ package templates
 import (
 	"fajntvajb/internal/files"
 	"fajntvajb/internal/logger"
+	"fajntvajb/internal/repository"
 	"html/template"
 	"net/http"
 )
@@ -40,7 +41,14 @@ func (t *Template) Render(w http.ResponseWriter, r *http.Request, name string, d
 	if data == nil {
 		data = make(map[string]any)
 	}
-	data["Auth"] = false
+
+	user, ok := r.Context().Value("user").(*repository.User)
+	if !ok {
+		data["Auth"] = false
+	} else {
+		data["Auth"] = true
+		data["User"] = user
+	}
 
 	return tmpl.ExecuteTemplate(w, name+".html", data)
 

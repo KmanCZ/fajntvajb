@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func New() (*http.ServeMux, error) {
+func New() (http.Handler, error) {
 	log := logger.Get()
 
 	r := http.NewServeMux()
@@ -37,5 +37,5 @@ func New() (*http.ServeMux, error) {
 	// Define API routes
 	r.HandleFunc("GET /api/test", handlers.handleHTMXTest)
 
-	return r, nil
+	return handlers.authenticateMiddleware(r), nil
 }

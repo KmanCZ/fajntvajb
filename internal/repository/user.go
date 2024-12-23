@@ -34,6 +34,19 @@ func (users *Users) GetUserByUsername(username string) (*User, error) {
 	return user, nil
 }
 
+func (users *Users) GetUserByID(id int) (*User, error) {
+	user := &User{}
+	err := users.db.Get(user, "SELECT * FROM users WHERE id = $1", id)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+
+	return user, nil
+}
+
 func (users *Users) CreateUser(username, displayName, password string) (*User, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {

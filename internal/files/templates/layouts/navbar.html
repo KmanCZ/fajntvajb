@@ -4,6 +4,7 @@
         <li class="mr-2"><a href="/vajbs">Explore</a></li>
         {{if .Auth}}
         <li><a href="/auth">Home</a></li>
+        <li><a href="/auth/profile">{{.User.DisplayName}}'s profile</a></li>
         <li><a href="/auth/logout">Logout</a></li>
         {{else}}
         <li><a href="/auth/login">Login</a></li>
