@@ -136,6 +136,18 @@ func (handlers *handlers) handleLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/auth", http.StatusSeeOther)
 }
 
+func (handlers *handlers) handleLogout(w http.ResponseWriter, r *http.Request) {
+	session, _ := handlers.session.Get(r, "session")
+	delete(session.Values, "userId")
+	err := session.Save(r, w)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+}
+
 func (handlers *handlers) handleAuthPage(w http.ResponseWriter, r *http.Request) {
 	err := handlers.tmpl.Render(w, r, "auth", map[string]any{
 		"Name": "test",

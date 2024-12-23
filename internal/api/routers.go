@@ -32,6 +32,7 @@ func New() (http.Handler, error) {
 	r.HandleFunc("POST /auth/register", handlers.requireNoAuthMiddleware(handlers.handleRegister))
 	r.HandleFunc("GET /auth/login", handlers.requireNoAuthMiddleware(handlers.handleLoginPage))
 	r.HandleFunc("POST /auth/login", handlers.requireNoAuthMiddleware(handlers.handleLogin))
+	r.HandleFunc("GET /auth/logout", handlers.requireAuthMiddleware(handlers.handleLogout))
 	r.HandleFunc("GET /", handlers.handleLandingPage)
 
 	// Define API routes
