@@ -9,14 +9,14 @@ import (
 )
 
 func (handlers *handlers) handleLandingPage(w http.ResponseWriter, r *http.Request) {
-	err := handlers.tmpl.Render(w, "index", nil)
+	err := handlers.tmpl.Render(w, r, "index", nil)
 	if err != nil {
 		handleWebError(w, err)
 	}
 }
 
-func (handlers *handlers) handleRegisterPage(w http.ResponseWriter, _ *http.Request) {
-	err := handlers.tmpl.Render(w, "register", nil)
+func (handlers *handlers) handleRegisterPage(w http.ResponseWriter, r *http.Request) {
+	err := handlers.tmpl.Render(w, r, "register", nil)
 	if err != nil {
 		handleWebError(w, err)
 	}
@@ -40,7 +40,7 @@ func (handlers *handlers) handleRegister(w http.ResponseWriter, r *http.Request)
 		Password:    password,
 	})
 
-	validationErrors := make(map[string]string)
+	validationErrors := make(map[string]any)
 	if err != nil {
 		validationErrors = handlers.validator.HandleUserValidationError(err)
 	}
@@ -62,7 +62,7 @@ func (handlers *handlers) handleRegister(w http.ResponseWriter, r *http.Request)
 		validationErrors["Username"] = username
 		validationErrors["DisplayName"] = displayName
 
-		err = handlers.tmpl.Render(w, "register", validationErrors)
+		err = handlers.tmpl.Render(w, r, "register", validationErrors)
 
 		if err != nil {
 			handleWebError(w, err)
@@ -78,8 +78,8 @@ func (handlers *handlers) handleRegister(w http.ResponseWriter, r *http.Request)
 	http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
 }
 
-func (handlers *handlers) handleLoginPage(w http.ResponseWriter, _ *http.Request) {
-	err := handlers.tmpl.Render(w, "login", nil)
+func (handlers *handlers) handleLoginPage(w http.ResponseWriter, r *http.Request) {
+	err := handlers.tmpl.Render(w, r, "login", nil)
 	if err != nil {
 		handleWebError(w, err)
 	}
@@ -102,7 +102,7 @@ func (handlers *handlers) handleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	if user == nil {
 		// Re-render the login page with an error message
-		err = handlers.tmpl.Render(w, "login", map[string]string{
+		err = handlers.tmpl.Render(w, r, "login", map[string]any{
 			"UsernameError": "Username does not exist",
 			"Username":      username,
 		})
@@ -115,7 +115,7 @@ func (handlers *handlers) handleLogin(w http.ResponseWriter, r *http.Request) {
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
 		// Re-render the login page with an error message
-		err = handlers.tmpl.Render(w, "login", map[string]string{
+		err = handlers.tmpl.Render(w, r, "login", map[string]any{
 			"PasswordError": "Incorrect password",
 			"Username":      username,
 		})
@@ -137,12 +137,8 @@ func (handlers *handlers) handleLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (handlers *handlers) handleAuthPage(w http.ResponseWriter, r *http.Request) {
-	err := handlers.tmpl.Render(w, "auth", struct {
-		Name string
-		Auth bool
-	}{
-		Name: "john doe",
-		Auth: true,
+	err := handlers.tmpl.Render(w, r, "auth", map[string]any{
+		"Name": "test",
 	})
 
 	if err != nil {

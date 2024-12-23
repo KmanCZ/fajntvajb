@@ -23,8 +23,8 @@ func (v *Validator) ValidateUser(user *User) error {
 	return v.validate.Struct(user)
 }
 
-func (v *Validator) HandleUserValidationError(err error) map[string]string {
-	var res = make(map[string]string)
+func (v *Validator) HandleUserValidationError(err error) map[string]any {
+	var res = make(map[string]any)
 	for _, err := range err.(validator.ValidationErrors) {
 		builder := strings.Builder{}
 		switch err.Tag() {

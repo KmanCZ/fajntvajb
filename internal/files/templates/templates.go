@@ -4,7 +4,7 @@ import (
 	"fajntvajb/internal/files"
 	"fajntvajb/internal/logger"
 	"html/template"
-	"io"
+	"net/http"
 )
 
 type Template struct {
@@ -24,7 +24,7 @@ func New() (*Template, error) {
 	}, nil
 }
 
-func (t *Template) Render(w io.Writer, name string, data interface{}) error {
+func (t *Template) Render(w http.ResponseWriter, r *http.Request, name string, data map[string]any) error {
 	log := logger.Get()
 	tmpl, err := t.templates.Clone()
 	if err != nil {
@@ -36,7 +36,12 @@ func (t *Template) Render(w io.Writer, name string, data interface{}) error {
 		log.Error().Err(err).Msg("Failed to parse template")
 		return err
 	}
+
+	if data == nil {
+		data = make(map[string]any)
+	}
+	data["Auth"] = false
+
 	return tmpl.ExecuteTemplate(w, name+".html", data)
 
 }
-
