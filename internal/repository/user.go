@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"github.com/jmoiron/sqlx"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -23,9 +24,13 @@ func NewUsers(db *sqlx.DB) *Users {
 func (users *Users) GetUserByUsername(username string) (*User, error) {
 	user := &User{}
 	err := users.db.Get(user, "SELECT * FROM users WHERE username = $1", username)
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+
 	return user, nil
 }
 

@@ -3,6 +3,7 @@ package api
 import (
 	"fajntvajb/internal/files"
 	"fajntvajb/internal/logger"
+	"fajntvajb/internal/validator"
 	"net/http"
 )
 
@@ -30,15 +31,49 @@ func (handlers *handlers) handleRegister(w http.ResponseWriter, r *http.Request)
 	username := r.Form.Get("username")
 	displayName := r.Form.Get("display_name")
 	password := r.Form.Get("password")
-	//TODO: Add password confirmation
-	//TODO: Add validation
+	passwordConfirmation := r.Form.Get("password2")
+
+	err = handlers.validator.ValidateUser(&validator.User{
+		Username:    username,
+		DisplayName: displayName,
+		Password:    password,
+	})
+
+	validationErrors := make(map[string]string)
+	if err != nil {
+		validationErrors = handlers.validator.HandleUserValidationError(err)
+	}
+	if password != passwordConfirmation {
+		validationErrors["Password2Error"] = "Passwords do not match"
+	}
+
+	user, err := handlers.db.Users.GetUserByUsername(username)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+	if user != nil {
+		validationErrors["UsernameError"] = "Username is already taken"
+	}
+
+	if len(validationErrors) > 0 {
+		// Re-render the register page with the validation errors and the user's input
+		validationErrors["Username"] = username
+		validationErrors["DisplayName"] = displayName
+
+		err = handlers.tmpl.Render(w, "register", validationErrors)
+
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
 
 	_, err = handlers.db.Users.CreateUser(username, displayName, password)
 	if err != nil {
 		handleWebError(w, err)
 		return
 	}
-
 	http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
 }
 

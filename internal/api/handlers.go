@@ -4,11 +4,13 @@ import (
 	"fajntvajb/internal/database"
 	"fajntvajb/internal/files/templates"
 	"fajntvajb/internal/logger"
+	"fajntvajb/internal/validator"
 )
 
 type handlers struct {
-	tmpl *templates.Template
-	db   *database.DB
+	tmpl      *templates.Template
+	db        *database.DB
+	validator *validator.Validator
 }
 
 func NewHandlers() (*handlers, error) {
@@ -26,8 +28,9 @@ func NewHandlers() (*handlers, error) {
 	}
 
 	res := handlers{
-		tmpl: templates,
-		db:   db,
+		tmpl:      templates,
+		db:        db,
+		validator: validator.New(),
 	}
 	return &res, nil
 }

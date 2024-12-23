@@ -10,22 +10,26 @@
             <div class="flex flex-col gap-1">
                 <label for="username">Username</label>
                 <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="text" id="username"
-                    name="username" required>
+                    name="username" required value="{{.Username}}">
+                <div class="text-red-500">{{.UsernameError}}</div>
             </div>
             <div class="flex flex-col gap-1">
                 <label for="display_name">Display Name</label>
                 <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="text" id="display_name"
-                    name="display_name" required>
+                    name="display_name" required value="{{.DisplayName}}">
+                <div class="text-red-500">{{.DisplayNameError}}</div>
             </div>
             <div class="flex flex-col gap-1">
                 <label for="password">Password</label>
                 <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="password" id="password"
                     name="password" required>
+                <div class="text-red-500">{{.PasswordError}}</div>
             </div>
             <div class="flex flex-col gap-1">
                 <label for="password2">Password Again</label>
                 <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="password" id="password2"
                     name="password2" required>
+                <div class="text-red-500">{{.Password2Error}}</div>
             </div>
             <button
                 class="mt-3 mx-auto bg-gray-600 hover:bg-gray-500 w-fit text-slate-100 px-5 py-2 rounded-3xl shadow-lg"
