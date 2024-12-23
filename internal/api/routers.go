@@ -27,11 +27,11 @@ func New() (http.Handler, error) {
 	r.Handle("GET /static/", http.StripPrefix("/static", http.FileServerFS(static)))
 
 	// Define page routes
-	r.HandleFunc("GET /auth", handlers.handleAuthPage)
-	r.HandleFunc("GET /auth/register", handlers.handleRegisterPage)
-	r.HandleFunc("POST /auth/register", handlers.handleRegister)
-	r.HandleFunc("GET /auth/login", handlers.handleLoginPage)
-	r.HandleFunc("POST /auth/login", handlers.handleLogin)
+	r.HandleFunc("GET /auth", handlers.requireAuthMiddleware(handlers.handleAuthPage))
+	r.HandleFunc("GET /auth/register", handlers.requireNoAuthMiddleware(handlers.handleRegisterPage))
+	r.HandleFunc("POST /auth/register", handlers.requireNoAuthMiddleware(handlers.handleRegister))
+	r.HandleFunc("GET /auth/login", handlers.requireNoAuthMiddleware(handlers.handleLoginPage))
+	r.HandleFunc("POST /auth/login", handlers.requireNoAuthMiddleware(handlers.handleLogin))
 	r.HandleFunc("GET /", handlers.handleLandingPage)
 
 	// Define API routes
