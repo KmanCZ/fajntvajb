@@ -20,6 +20,28 @@ func (handlers *handlers) handleRegisterPage(w http.ResponseWriter, _ *http.Requ
 	}
 }
 
+func (handlers *handlers) handleRegister(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	username := r.Form.Get("username")
+	displayName := r.Form.Get("display_name")
+	password := r.Form.Get("password")
+	//TODO: Add password confirmation
+	//TODO: Add validation
+
+	_, err = handlers.db.Users.CreateUser(username, displayName, password)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+}
+
 func (handlers *handlers) handleLoginPage(w http.ResponseWriter, _ *http.Request) {
 	err := handlers.tmpl.Render(w, "login", nil)
 	if err != nil {

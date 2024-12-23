@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/jmoiron/sqlx"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Users struct {
@@ -9,10 +10,10 @@ type Users struct {
 }
 
 type User struct {
-	ID          int
-	Username    string
-	DisplayName string
-	Password    string
+	ID          int    `db:"id"`
+	Username    string `db:"username"`
+	DisplayName string `db:"display_name"`
+	Password    string `db:"password"`
 }
 
 func NewUsers(db *sqlx.DB) *Users {
@@ -29,12 +30,16 @@ func (users *Users) GetUserByUsername(username string) (*User, error) {
 }
 
 func (users *Users) CreateUser(username, displayName, password string) (*User, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
 	user := &User{
 		Username:    username,
 		DisplayName: displayName,
-		Password:    password,
+		Password:    string(hashedPassword),
 	}
-	_, err := users.db.NamedExec("INSERT INTO users (username, display_name, password) VALUES (:username, :display_name, :password)", user)
+	_, err = users.db.NamedExec("INSERT INTO users (username, display_name, password) VALUES (:username, :display_name, :password)", user)
 	if err != nil {
 		return nil, err
 	}
