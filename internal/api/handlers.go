@@ -5,12 +5,17 @@ import (
 	"fajntvajb/internal/files/templates"
 	"fajntvajb/internal/logger"
 	"fajntvajb/internal/validator"
+	"net/http"
+	"os"
+
+	"github.com/gorilla/sessions"
 )
 
 type handlers struct {
 	tmpl      *templates.Template
 	db        *database.DB
 	validator *validator.Validator
+	session   *sessions.CookieStore
 }
 
 func NewHandlers() (*handlers, error) {
@@ -27,10 +32,16 @@ func NewHandlers() (*handlers, error) {
 		return nil, err
 	}
 
+	session := sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+	session.Options.HttpOnly = true
+	session.Options.Secure = true
+	session.Options.SameSite = http.SameSiteLaxMode
+
 	res := handlers{
 		tmpl:      templates,
 		db:        db,
 		validator: validator.New(),
+		session:   session,
 	}
 	return &res, nil
 }

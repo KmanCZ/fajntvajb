@@ -4,6 +4,7 @@ import (
 	"fajntvajb/internal/files"
 	"fajntvajb/internal/logger"
 	"fajntvajb/internal/validator"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
 
@@ -82,6 +83,57 @@ func (handlers *handlers) handleLoginPage(w http.ResponseWriter, _ *http.Request
 	if err != nil {
 		handleWebError(w, err)
 	}
+}
+
+func (handlers *handlers) handleLogin(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	username := r.Form.Get("username")
+	password := r.Form.Get("password")
+
+	user, err := handlers.db.Users.GetUserByUsername(username)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+	if user == nil {
+		// Re-render the login page with an error message
+		err = handlers.tmpl.Render(w, "login", map[string]string{
+			"UsernameError": "Username does not exist",
+			"Username":      username,
+		})
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		// Re-render the login page with an error message
+		err = handlers.tmpl.Render(w, "login", map[string]string{
+			"PasswordError": "Incorrect password",
+			"Username":      username,
+		})
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	session, _ := handlers.session.Get(r, "session")
+	session.Values["userId"] = user.ID
+	err = session.Save(r, w)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	http.Redirect(w, r, "/auth", http.StatusSeeOther)
 }
 
 func (handlers *handlers) handleAuthPage(w http.ResponseWriter, r *http.Request) {

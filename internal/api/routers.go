@@ -31,6 +31,7 @@ func New() (*http.ServeMux, error) {
 	r.HandleFunc("GET /auth/register", handlers.handleRegisterPage)
 	r.HandleFunc("POST /auth/register", handlers.handleRegister)
 	r.HandleFunc("GET /auth/login", handlers.handleLoginPage)
+	r.HandleFunc("POST /auth/login", handlers.handleLogin)
 	r.HandleFunc("GET /", handlers.handleLandingPage)
 
 	// Define API routes
