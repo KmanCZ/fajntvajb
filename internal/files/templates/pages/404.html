@@ -1,0 +1,15 @@
+{{template "layout.html" .}}
+
+{{define "title"}}Page not found{{end}}
+
+{{define "content"}}
+<div class="flex justify-center items-center h-full bg-red-100">
+    <div class="bg-red-300 w-fit flex flex-col items-center gap-5 p-4 rounded-xl shadow-lg">
+        <h1 class="text-5xl w-fit">Error 404</h1>
+        <p class="text-4xl w-fit">
+            Page not found.
+        </p>
+    </div>
+</div>
+
+{{end}}

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"context"
 	"fajntvajb/internal/files"
 	"fajntvajb/internal/logger"
 	"fajntvajb/internal/repository"
@@ -11,7 +10,13 @@ import (
 )
 
 func (handlers *handlers) handleLandingPage(w http.ResponseWriter, r *http.Request) {
-	err := handlers.tmpl.Render(w, r, "index", nil)
+	path := "index"
+	if r.URL.Path != "/" {
+		w.WriteHeader(http.StatusNotFound)
+		path = "404"
+	}
+
+	err := handlers.tmpl.Render(w, r, path, nil)
 	if err != nil {
 		handleWebError(w, err)
 	}
