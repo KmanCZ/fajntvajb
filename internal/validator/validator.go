@@ -48,21 +48,19 @@ func (v *Validator) HandleUserValidationError(err error) map[string]any {
 	return res
 }
 
-func (v *Validator) ValidateUsername(username string) error {
-	err := v.validate.Var(username, "required,alphanum,min=3,max=32")
+func (v *Validator) ValidateDisplayName(displayName string) error {
+	err := v.validate.Var(displayName, "required,min=3,max=32")
 	if err == nil {
 		return nil
 	}
 
 	switch err.(validator.ValidationErrors)[0].Tag() {
 	case "required":
-		return fmt.Errorf("Username is required")
-	case "alphanum":
-		return fmt.Errorf("Username must be alphanumeric")
+		return fmt.Errorf("Display name is required")
 	case "min":
-		return fmt.Errorf("Username must be at least 3 characters long")
+		return fmt.Errorf("Display name must be at least 3 characters long")
 	case "max":
-		return fmt.Errorf("Username must be at most 32 characters long")
+		return fmt.Errorf("Display name must be at most 32 characters long")
 	}
 	return err
 }

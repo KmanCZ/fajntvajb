@@ -205,7 +205,7 @@ func (handlers *handlers) handleDisplayNameEdit(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	err = handlers.validator.ValidateUsername(displayName)
+	err = handlers.validator.ValidateDisplayName(displayName)
 	if err != nil {
 		// Re-render the profile page with an error message
 		err = handlers.tmpl.Render(w, r, "profile", map[string]any{
