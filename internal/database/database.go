@@ -8,12 +8,13 @@ import (
 	_ "github.com/lib/pq"
 	"os"
 
+	"fajntvajb/internal/repository"
 	"github.com/jmoiron/sqlx"
 	"github.com/pressly/goose/v3"
 )
 
 type DB struct {
-	connection *sqlx.DB
+	Users *repository.Users
 }
 
 func migrate(db *sql.DB) error {
@@ -73,7 +74,7 @@ func New() (*DB, error) {
 	}
 
 	res := DB{
-		connection: db,
+		Users: repository.NewUsers(db),
 	}
 
 	return &res, nil

@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func New() (*http.ServeMux, error) {
+func New() (http.Handler, error) {
 	log := logger.Get()
 
 	r := http.NewServeMux()
@@ -27,12 +27,20 @@ func New() (*http.ServeMux, error) {
 	r.Handle("GET /static/", http.StripPrefix("/static", http.FileServerFS(static)))
 
 	// Define page routes
-	r.HandleFunc("GET /auth", handlers.handleAuthPage)
+	r.HandleFunc("GET /auth", handlers.requireAuthMiddleware(handlers.handleAuthPage))
+	r.HandleFunc("GET /auth/register", handlers.requireNoAuthMiddleware(handlers.handleRegisterPage))
+	r.HandleFunc("POST /auth/register", handlers.requireNoAuthMiddleware(handlers.handleRegister))
+	r.HandleFunc("GET /auth/login", handlers.requireNoAuthMiddleware(handlers.handleLoginPage))
+	r.HandleFunc("POST /auth/login", handlers.requireNoAuthMiddleware(handlers.handleLogin))
+	r.HandleFunc("DELETE /auth/logout", handlers.requireAuthMiddleware(handlers.handleLogout))
+	r.HandleFunc("GET /auth/profile", handlers.requireAuthMiddleware(handlers.handleProfilePage))
+	r.HandleFunc("POST /auth/profile/displayname", handlers.requireAuthMiddleware(handlers.handleDisplayNameEdit))
+	r.HandleFunc("POST /auth/profile/password", handlers.requireAuthMiddleware(handlers.handlePasswordEdit))
+	r.HandleFunc("POST /auth/profile/delete", handlers.requireAuthMiddleware(handlers.handleDeleteAccount))
 	r.HandleFunc("GET /", handlers.handleLandingPage)
 
 	// Define API routes
-	r.HandleFunc("POST /api/click", handlers.handleHTMXPostTest)
 	r.HandleFunc("GET /api/test", handlers.handleHTMXTest)
 
-	return r, nil
+	return handlers.authenticateMiddleware(r), nil
 }

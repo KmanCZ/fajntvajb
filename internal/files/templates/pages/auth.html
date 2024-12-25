@@ -3,14 +3,5 @@
 {{define "title"}}Home{{end}}
 
 {{define "content"}}
-<h1>Hello {{.Name}} to fajntvajb!</h1>
-
-<form hx-on::after-request="this.reset()" hx-post="/api/click" hx-target="#vals" hx-swap="beforeend">
-    <input type="text" name="name">
-    <input type="submit" value="Submit">
-</form>
-
-<ul id="vals">
-    {{range .Rows}}<p>{{.}}</p>{{end}}
-</ul>
+<h1>Hello {{.User.DisplayName}} to fajntvajb!</h1>
 {{end}}
