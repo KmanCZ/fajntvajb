@@ -169,6 +169,72 @@ func (handlers *handlers) handleProfilePage(w http.ResponseWriter, r *http.Reque
 	}
 }
 
+func (handlers *handlers) handleDisplayNameEdit(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	displayName := r.Form.Get("display_name")
+	password := r.Form.Get("password")
+	user := r.Context().Value("user").(*repository.User)
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		// Re-render the profile page with an error message
+		err = handlers.tmpl.Render(w, r, "profile", map[string]any{
+			"DisplayName":   displayName,
+			"PasswordError": "Incorrect password",
+		})
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	if displayName == user.DisplayName {
+		// Re-render the profile page with an error message
+		err = handlers.tmpl.Render(w, r, "profile", map[string]any{
+			"DisplayName":      displayName,
+			"DisplayNameError": "Display name is the same",
+		})
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	err = handlers.validator.ValidateUsername(displayName)
+	if err != nil {
+		// Re-render the profile page with an error message
+		err = handlers.tmpl.Render(w, r, "profile", map[string]any{
+			"DisplayName":      displayName,
+			"DisplayNameError": err.Error(),
+		})
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	err = handlers.db.Users.UpdateDisplayName(user.ID, displayName)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	user.DisplayName = displayName
+
+	err = handlers.tmpl.Render(w, r, "profile", map[string]any{
+		"DisplayName": displayName,
+		"Success":     "Display name updated",
+	})
+	if err != nil {
+		handleWebError(w, err)
+	}
+}
+
 func handleWebError(w http.ResponseWriter, err error) {
 	log := logger.Get()
 	log.Error().Err(err).Msg("Failed to render page")

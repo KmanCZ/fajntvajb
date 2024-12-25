@@ -63,3 +63,11 @@ func (users *Users) CreateUser(username, displayName, password string) (*User, e
 	}
 	return user, nil
 }
+
+func (users *Users) UpdateDisplayName(id int, newName string) error {
+	_, err := users.db.Exec("UPDATE users SET display_name = $1 WHERE id = $2", newName, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}

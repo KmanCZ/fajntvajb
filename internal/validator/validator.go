@@ -1,8 +1,10 @@
 package validator
 
 import (
-	"github.com/go-playground/validator/v10"
+	"fmt"
 	"strings"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type Validator struct {
@@ -44,4 +46,23 @@ func (v *Validator) HandleUserValidationError(err error) map[string]any {
 		res[err.Field()+"Error"] = builder.String()
 	}
 	return res
+}
+
+func (v *Validator) ValidateUsername(username string) error {
+	err := v.validate.Var(username, "required,alphanum,min=3,max=32")
+	if err == nil {
+		return nil
+	}
+
+	switch err.(validator.ValidationErrors)[0].Tag() {
+	case "required":
+		return fmt.Errorf("Username is required")
+	case "alphanum":
+		return fmt.Errorf("Username must be alphanumeric")
+	case "min":
+		return fmt.Errorf("Username must be at least 3 characters long")
+	case "max":
+		return fmt.Errorf("Username must be at most 32 characters long")
+	}
+	return err
 }
