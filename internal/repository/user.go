@@ -71,3 +71,15 @@ func (users *Users) UpdateDisplayName(id int, newName string) error {
 	}
 	return nil
 }
+
+func (users *Users) UpdatePassword(id int, newPassword string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	_, err = users.db.Exec("UPDATE users SET password = $1 WHERE id = $2", string(hashedPassword), id)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedPassword), nil
+}

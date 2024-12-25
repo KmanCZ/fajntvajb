@@ -64,3 +64,20 @@ func (v *Validator) ValidateDisplayName(displayName string) error {
 	}
 	return err
 }
+
+func (v *Validator) ValidatePassword(password string) error {
+	err := v.validate.Var(password, "required,min=8,max=32")
+	if err == nil {
+		return nil
+	}
+
+	switch err.(validator.ValidationErrors)[0].Tag() {
+	case "required":
+		return fmt.Errorf("Password is required")
+	case "min":
+		return fmt.Errorf("Password must be at least 8 characters long")
+	case "max":
+		return fmt.Errorf("Password must be at most 32 characters long")
+	}
+	return err
+}

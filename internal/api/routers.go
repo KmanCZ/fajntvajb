@@ -35,6 +35,7 @@ func New() (http.Handler, error) {
 	r.HandleFunc("DELETE /auth/logout", handlers.requireAuthMiddleware(handlers.handleLogout))
 	r.HandleFunc("GET /auth/profile", handlers.requireAuthMiddleware(handlers.handleProfilePage))
 	r.HandleFunc("POST /auth/profile/displayname", handlers.requireAuthMiddleware(handlers.handleDisplayNameEdit))
+	r.HandleFunc("POST /auth/profile/password", handlers.requireAuthMiddleware(handlers.handlePasswordEdit))
 	r.HandleFunc("GET /", handlers.handleLandingPage)
 
 	// Define API routes

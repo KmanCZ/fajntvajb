@@ -235,6 +235,80 @@ func (handlers *handlers) handleDisplayNameEdit(w http.ResponseWriter, r *http.R
 	}
 }
 
+func (handlers *handlers) handlePasswordEdit(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	password := r.Form.Get("password")
+	newPassword := r.Form.Get("new_password")
+	newPasswordConfirmation := r.Form.Get("new_password2")
+	user := r.Context().Value("user").(*repository.User)
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		// Re-render the profile page with an error message
+		err = handlers.tmpl.Render(w, r, "profile", map[string]any{
+			"PasswordUpdateError": "Incorrect password",
+		})
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	if password == newPassword {
+		// Re-render the profile page with an error message
+		err = handlers.tmpl.Render(w, r, "profile", map[string]any{
+			"NewPasswordError": "New password is the same as the old one",
+		})
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	if newPassword != newPasswordConfirmation {
+		// Re-render the profile page with an error message
+		err = handlers.tmpl.Render(w, r, "profile", map[string]any{
+			"NewPassword2Error": "New passwords do not match",
+		})
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	err = handlers.validator.ValidatePassword(newPassword)
+	if err != nil {
+		// Re-render the profile page with an error message
+		err = handlers.tmpl.Render(w, r, "profile", map[string]any{
+			"NewPasswordError": err.Error(),
+		})
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	hashedPassword, err := handlers.db.Users.UpdatePassword(user.ID, newPassword)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	user.Password = hashedPassword
+
+	err = handlers.tmpl.Render(w, r, "profile", map[string]any{
+		"Success": "Password updated",
+	})
+	if err != nil {
+		handleWebError(w, err)
+	}
+}
+
 func handleWebError(w http.ResponseWriter, err error) {
 	log := logger.Get()
 	log.Error().Err(err).Msg("Failed to render page")
