@@ -1,0 +1,88 @@
+{{template "layout.html" .}}
+
+{{define "title"}}Profile{{end}}
+
+{{define "content"}}
+<div class="flex flex-col items-center justify-around gap-4 py-4 h-full">
+    <h1 class="text-4xl mb-5">Profile setting</h1>
+    <div class="w-[30rem] bg-gray-50 p-10 rounded-xl shadow-lg">
+        <h1 class="text-2xl">Change display name</h1>
+        <form hx-put="/auth/profile/display_name" method="post" class="flex flex-col gap-2">
+            <div class="flex flex-col gap-1">
+                <label for="display_name">Display name</label>
+                <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="text" id="display_name"
+                    name="display_name" required value="{{.DisplayName}}">
+                <div class="text-red-500">{{.DisplayNameError}}</div>
+            </div>
+            <div class="flex flex-col gap-1">
+                <label for="password_name">Password</label>
+                <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="password" id="password_name"
+                    name="password" required>
+                <div class="text-red-500">{{.PasswordError}}</div>
+            </div>
+            <button
+                class="mt-3 mx-auto bg-gray-600 hover:bg-gray-500 w-fit text-slate-100 px-5 py-2 rounded-3xl shadow-lg"
+                type="submit">
+                Update
+            </button>
+        </form>
+    </div>
+    <div class="w-[30rem] bg-gray-50 p-10 rounded-xl shadow-lg">
+        <h1 class="text-2xl">Change password</h1>
+        <form hx-put="/auth/profile/password" method="post" class="flex flex-col gap-2">
+            <div class="flex flex-col gap-1">
+                <label for="new_password">New password</label>
+                <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="password" id="new_password"
+                    name="new_password" required value="{{.NewPassword}}">
+                <div class="text-red-500">{{.NewPasswordError}}</div>
+            </div>
+            <div class="flex flex-col gap-1">
+                <label for="new_password2">New password again</label>
+                <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="password" id="new_password2"
+                    name="new_password2" required value="{{.NewPassword2}}">
+                <div class="text-red-500">{{.NewPassword2Error}}</div>
+            </div>
+            <div class="flex flex-col gap-1">
+                <label for="password_password">Old password</label>
+                <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="password" id="password_password"
+                    name="password" required>
+                <div class="text-red-500">{{.PasswordError}}</div>
+            </div>
+            <button
+                class="mt-3 mx-auto bg-gray-600 hover:bg-gray-500 w-fit text-slate-100 px-5 py-2 rounded-3xl shadow-lg"
+                type="submit">
+                Update
+            </button>
+        </form>
+    </div>
+    <div class="w-[30rem] bg-gray-50 p-10 rounded-xl shadow-lg">
+        <h1 class="text-2xl mb-3">Delete Account</h1>
+        <form hx-delete="/auth/profile/delete" method="post" class="flex flex-col gap-2" x-data="">
+            <div class="flex flex-col gap-1">
+                <label for="password_delete">Password</label>
+                <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="password" id="password_delete"
+                    name="password" required>
+                <div class="text-red-500">{{.DeleteError}}</div>
+            </div>
+            <button
+                class="mt-3 mx-auto bg-red-600 hover:bg-red-500 w-fit text-slate-100 px-5 py-2 rounded-3xl shadow-lg"
+                type="button" @click="$refs.dialog.showModal()">
+                Delete
+            </button>
+            <dialog x-ref="dialog" class="w-64 bg-gray-50 p-10 rounded-xl shadow-lg text-center">
+                <p class="text-2xl mb-3">Are you sure?</p>
+                <button
+                    class="mt-3 mx-auto bg-red-600 hover:bg-red-500 w-fit text-slate-100 px-5 py-2 rounded-3xl shadow-lg"
+                    type="submit" @click="$refs.dialog.close()">
+                    Yes
+                </button>
+                <button
+                    class="mt-3 mx-auto bg-gray-600 hover:bg-gray-500 w-fit text-slate-100 px-5 py-2 rounded-3xl shadow-lg"
+                    type="button" @click="$refs.dialog.close()">
+                    No
+                </button>
+            </dialog>
+        </form>
+    </div>
+</div>
+{{end}}

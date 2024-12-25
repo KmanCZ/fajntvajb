@@ -3,6 +3,7 @@ package api
 import (
 	"fajntvajb/internal/files"
 	"fajntvajb/internal/logger"
+	"fajntvajb/internal/repository"
 	"fajntvajb/internal/validator"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
@@ -153,6 +154,16 @@ func (handlers *handlers) handleAuthPage(w http.ResponseWriter, r *http.Request)
 		"Name": "test",
 	})
 
+	if err != nil {
+		handleWebError(w, err)
+	}
+}
+
+func (handlers *handlers) handleProfilePage(w http.ResponseWriter, r *http.Request) {
+	user := r.Context().Value("user").(*repository.User)
+	err := handlers.tmpl.Render(w, r, "profile", map[string]any{
+		"DisplayName": user.DisplayName,
+	})
 	if err != nil {
 		handleWebError(w, err)
 	}
