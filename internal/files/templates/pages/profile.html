@@ -63,7 +63,7 @@
     </div>
     <div class="w-[30rem] bg-gray-50 p-10 rounded-xl shadow-lg">
         <h1 class="text-2xl mb-3">Delete Account</h1>
-        <form hx-delete="/auth/profile/delete" method="post" class="flex flex-col gap-2" x-data="">
+        <form action="/auth/profile/delete" method="post" class="flex flex-col gap-2" x-data="">
             <div class="flex flex-col gap-1">
                 <label for="password_delete">Password</label>
                 <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="password" id="password_delete"

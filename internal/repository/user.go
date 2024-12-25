@@ -83,3 +83,11 @@ func (users *Users) UpdatePassword(id int, newPassword string) (string, error) {
 	}
 	return string(hashedPassword), nil
 }
+
+func (users *Users) DeleteUser(id int) error {
+	_, err := users.db.Exec("DELETE FROM users WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
+	return nil
+}

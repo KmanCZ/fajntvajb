@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"fajntvajb/internal/files"
 	"fajntvajb/internal/logger"
 	"fajntvajb/internal/repository"
@@ -307,6 +308,45 @@ func (handlers *handlers) handlePasswordEdit(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		handleWebError(w, err)
 	}
+}
+
+func (handlers *handlers) handleDeleteAccount(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	password := r.Form.Get("password")
+	user := r.Context().Value("user").(*repository.User)
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		// Re-render the profile page with an error message
+		err = handlers.tmpl.Render(w, r, "profile", map[string]any{
+			"DeleteError": "Incorrect password",
+		})
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	err = handlers.db.Users.DeleteUser(user.ID)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	session, _ := handlers.session.Get(r, "session")
+	delete(session.Values, "userId")
+	err = session.Save(r, w)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
 }
 
 func handleWebError(w http.ResponseWriter, err error) {
