@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+
 	"github.com/jmoiron/sqlx"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -11,10 +12,11 @@ type Users struct {
 }
 
 type User struct {
-	ID          int    `db:"id"`
-	Username    string `db:"username"`
-	DisplayName string `db:"display_name"`
-	Password    string `db:"password"`
+	ID          int            `db:"id"`
+	Username    string         `db:"username"`
+	DisplayName string         `db:"display_name"`
+	Password    string         `db:"password"`
+	ProfilePic  sql.NullString `db:"profile_image"`
 }
 
 func NewUsers(db *sqlx.DB) *Users {
