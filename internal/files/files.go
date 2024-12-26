@@ -13,7 +13,7 @@ var Migrations embed.FS
 
 func GetProfilePicPath(profilePicName sql.NullString) string {
 	if profilePicName.Valid {
-		return "/pictures/" + profilePicName.String
+		return "https://localhost.localstack.cloud:4566/profile-pictures/" + profilePicName.String
 	}
 	return "/static/img/blank-profile-picture.png"
 }

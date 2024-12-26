@@ -5,7 +5,6 @@ import (
 	"fajntvajb/internal/logger"
 	"io/fs"
 	"net/http"
-	"os"
 )
 
 func New() (http.Handler, error) {
@@ -24,17 +23,8 @@ func New() (http.Handler, error) {
 		return nil, err
 	}
 
-	userFilesPath := os.Getenv("USER_FILES_PATH")
-	if userFilesPath == "" {
-		userFilesPath = "./user-files"
-	}
-
-	log.Info().Str("path", userFilesPath).Msg("User files path")
-
 	// Serve static files from /static
 	r.Handle("GET /static/", http.StripPrefix("/static", http.FileServerFS(static)))
-	// Serve user files from /pictures
-	r.Handle("GET /pictures/", http.StripPrefix("/pictures", http.FileServer(http.Dir(userFilesPath))))
 
 	// Define page routes
 	r.HandleFunc("GET /auth", handlers.requireAuthMiddleware(handlers.handleAuthPage))
