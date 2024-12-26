@@ -48,6 +48,8 @@ func (t *Template) Render(w http.ResponseWriter, r *http.Request, name string, d
 	} else {
 		data["Auth"] = true
 		data["User"] = user
+
+		data["ProfilePicPath"] = files.GetProfilePicPath(user.ProfilePic)
 	}
 
 	return tmpl.ExecuteTemplate(w, name+".html", data)
