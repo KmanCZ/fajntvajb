@@ -93,3 +93,11 @@ func (users *Users) DeleteUser(id int) error {
 	}
 	return nil
 }
+
+func (users *Users) UpdateProfilePic(id int, profilePic string) error {
+	_, err := users.db.Exec("UPDATE users SET profile_image = $1 WHERE id = $2", profilePic, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
