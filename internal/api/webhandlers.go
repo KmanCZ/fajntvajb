@@ -6,6 +6,7 @@ import (
 	"fajntvajb/internal/repository"
 	"fajntvajb/internal/validator"
 	"golang.org/x/crypto/bcrypt"
+	"io"
 	"net/http"
 )
 
@@ -343,6 +344,14 @@ func (handlers *handlers) handleDeleteAccount(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	if user.ProfilePic.Valid {
+		err = files.DeleteProfilePic(user.ProfilePic.String)
+		log := logger.Get()
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to delete profile picture")
+		}
+	}
+
 	session, _ := handlers.session.Get(r, "session")
 	delete(session.Values, "userId")
 	err = session.Save(r, w)
@@ -352,6 +361,52 @@ func (handlers *handlers) handleDeleteAccount(w http.ResponseWriter, r *http.Req
 	}
 
 	http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+}
+
+func (handlers *handlers) handleProfilePictureEdit(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	file, _, err := r.FormFile("profile_picture")
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+	defer file.Close()
+
+	fileBytes, err := io.ReadAll(file)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	user := r.Context().Value("user").(*repository.User)
+	fileName := user.Username
+
+	err = files.UploadProfilePic(fileName, fileBytes)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	err = handlers.db.Users.UpdateProfilePic(user.ID, fileName)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	user.ProfilePic.String = fileName
+	user.ProfilePic.Valid = true
+
+	err = handlers.tmpl.Render(w, r, "profile", map[string]any{
+		"Success": "Profile picture updated",
+	})
+	if err != nil {
+		handleWebError(w, err)
+	}
 }
 
 func handleWebError(w http.ResponseWriter, err error) {

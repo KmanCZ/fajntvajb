@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+
 	"github.com/jmoiron/sqlx"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -11,10 +12,11 @@ type Users struct {
 }
 
 type User struct {
-	ID          int    `db:"id"`
-	Username    string `db:"username"`
-	DisplayName string `db:"display_name"`
-	Password    string `db:"password"`
+	ID          int            `db:"id"`
+	Username    string         `db:"username"`
+	DisplayName string         `db:"display_name"`
+	Password    string         `db:"password"`
+	ProfilePic  sql.NullString `db:"profile_image"`
 }
 
 func NewUsers(db *sqlx.DB) *Users {
@@ -86,6 +88,14 @@ func (users *Users) UpdatePassword(id int, newPassword string) (string, error) {
 
 func (users *Users) DeleteUser(id int) error {
 	_, err := users.db.Exec("DELETE FROM users WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (users *Users) UpdateProfilePic(id int, profilePic string) error {
+	_, err := users.db.Exec("UPDATE users SET profile_image = $1 WHERE id = $2", profilePic, id)
 	if err != nil {
 		return err
 	}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fajntvajb/internal/api"
+	"fajntvajb/internal/files"
 	"fajntvajb/internal/logger"
 	"net/http"
 	"os"
@@ -14,6 +15,12 @@ func main() {
 	log := logger.Get()
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to load .env file")
+	}
+
+	err = files.InitS3Client()
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to initialize S3 client")
+		return
 	}
 
 	router, err := api.New()
