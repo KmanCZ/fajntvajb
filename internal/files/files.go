@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 //go:embed static/* templates/*
@@ -40,7 +41,25 @@ func InitS3Client() error {
 		o.BaseEndpoint = aws.String(awsEndpoint)
 	})
 
-	return nil
+	_, err = s3client.CreateBucket(context.TODO(), &s3.CreateBucketInput{
+		Bucket: aws.String("profile-pictures"),
+		CreateBucketConfiguration: &types.CreateBucketConfiguration{
+			LocationConstraint: types.BucketLocationConstraint(awsRegion),
+		},
+	})
+
+	if err != nil {
+		return err
+	}
+
+	_, err = s3client.CreateBucket(context.TODO(), &s3.CreateBucketInput{
+		Bucket: aws.String("vajb-pictures"),
+		CreateBucketConfiguration: &types.CreateBucketConfiguration{
+			LocationConstraint: types.BucketLocationConstraint(awsRegion),
+		},
+	})
+
+	return err
 }
 
 func UploadProfilePic(profilePicName string, profilePicData []byte) error {
