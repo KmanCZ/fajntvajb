@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"embed"
+	"errors"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -41,24 +42,44 @@ func InitS3Client() error {
 		o.BaseEndpoint = aws.String(awsEndpoint)
 	})
 
-	_, err = s3client.CreateBucket(context.TODO(), &s3.CreateBucketInput{
-		Bucket: aws.String("profile-pictures"),
-		CreateBucketConfiguration: &types.CreateBucketConfiguration{
-			LocationConstraint: types.BucketLocationConstraint(awsRegion),
-		},
-	})
-
-	if err != nil {
-		return err
+	buckets := []string{"profile-pictures", "vajb-pictures"}
+	for _, bucket := range buckets {
+		exists, err := checkBucketExists(s3client, bucket)
+		if err != nil {
+			return err
+		}
+		if !exists {
+			err = createBucket(bucket, awsRegion)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
-	_, err = s3client.CreateBucket(context.TODO(), &s3.CreateBucketInput{
-		Bucket: aws.String("vajb-pictures"),
+	return nil
+}
+
+func checkBucketExists(client *s3.Client, bucketName string) (bool, error) {
+	_, err := client.HeadBucket(context.TODO(), &s3.HeadBucketInput{
+		Bucket: aws.String(bucketName),
+	})
+	if err != nil {
+		var notFound *types.NotFound
+		if errors.As(err, &notFound) {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
+}
+
+func createBucket(bucketName, region string) error {
+	_, err := s3client.CreateBucket(context.TODO(), &s3.CreateBucketInput{
+		Bucket: aws.String(bucketName),
 		CreateBucketConfiguration: &types.CreateBucketConfiguration{
-			LocationConstraint: types.BucketLocationConstraint(awsRegion),
+			LocationConstraint: types.BucketLocationConstraint(region),
 		},
 	})
-
 	return err
 }
 
@@ -85,3 +106,4 @@ func GetProfilePicPath(profilePicName sql.NullString) string {
 	}
 	return "/static/img/blank-profile-picture.png"
 }
+
