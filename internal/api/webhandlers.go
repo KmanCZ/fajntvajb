@@ -5,9 +5,11 @@ import (
 	"fajntvajb/internal/logger"
 	"fajntvajb/internal/repository"
 	"fajntvajb/internal/validator"
-	"golang.org/x/crypto/bcrypt"
 	"io"
 	"net/http"
+	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func (handlers *handlers) handleLandingPage(w http.ResponseWriter, r *http.Request) {
@@ -411,6 +413,9 @@ func (handlers *handlers) handleProfilePictureEdit(w http.ResponseWriter, r *htt
 
 func (handlers *handlers) handleNewVajbPage(w http.ResponseWriter, r *http.Request) {
 	err := handlers.tmpl.Render(w, r, "vajb_form", nil)
+	err := handlers.tmpl.Render(w, r, "vajb_form", map[string]any{
+		"MinDate": time.Now().Format("2006-01-02"),
+	})
 	if err != nil {
 		handleWebError(w, err)
 	}
