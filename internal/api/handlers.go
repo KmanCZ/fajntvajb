@@ -37,10 +37,16 @@ func NewHandlers() (*handlers, error) {
 	session.Options.Secure = true
 	session.Options.SameSite = http.SameSiteLaxMode
 
+	validator, err := validator.New()
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to create validator")
+		return nil, err
+	}
+
 	res := handlers{
 		tmpl:      templates,
 		db:        db,
-		validator: validator.New(),
+		validator: validator,
 		session:   session,
 	}
 	return &res, nil

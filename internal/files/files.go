@@ -107,3 +107,11 @@ func GetProfilePicPath(profilePicName sql.NullString) string {
 	return "/static/img/blank-profile-picture.png"
 }
 
+func UploadVajbPic(vajbPicName string, vajbPicData []byte) error {
+	_, err := s3client.PutObject(context.TODO(), &s3.PutObjectInput{
+		Bucket: aws.String("vajb-pictures"),
+		Key:    aws.String(vajbPicName),
+		Body:   bytes.NewReader(vajbPicData),
+	})
+	return err
+}
