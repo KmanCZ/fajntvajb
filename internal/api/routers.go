@@ -38,6 +38,9 @@ func New() (http.Handler, error) {
 	r.HandleFunc("POST /auth/profile/password", handlers.requireAuthMiddleware(handlers.handlePasswordEdit))
 	r.HandleFunc("POST /auth/profile/profilepicture", handlers.requireAuthMiddleware(handlers.handleProfilePictureEdit))
 	r.HandleFunc("POST /auth/profile/delete", handlers.requireAuthMiddleware(handlers.handleDeleteAccount))
+
+	r.HandleFunc("GET /vajb/new", handlers.requireAuthMiddleware(handlers.handleNewVajbPage))
+
 	r.HandleFunc("GET /", handlers.handleLandingPage)
 
 	// Define API routes

@@ -409,6 +409,13 @@ func (handlers *handlers) handleProfilePictureEdit(w http.ResponseWriter, r *htt
 	}
 }
 
+func (handlers *handlers) handleNewVajbPage(w http.ResponseWriter, r *http.Request) {
+	err := handlers.tmpl.Render(w, r, "vajb_form", nil)
+	if err != nil {
+		handleWebError(w, err)
+	}
+}
+
 func handleWebError(w http.ResponseWriter, err error) {
 	log := logger.Get()
 	log.Error().Err(err).Msg("Failed to render page")

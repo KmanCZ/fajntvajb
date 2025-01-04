@@ -1,0 +1,83 @@
+{{template "layout.html" .}}
+
+{{define "title"}}Create vajb{{end}}
+
+{{define "content"}}
+<div class="flex items-center justify-center h-full">
+    <div class="w-[80%] bg-gray-50 p-10 rounded-xl shadow-lg">
+        <h1 class="text-2xl mb-3">Create vajb</h1>
+        <form action="/vajb/new" method="post" enctype="multipart/form-data" class="flex flex-col gap-2">
+            <div class="flex flex-col gap-1">
+                <label for="name">Name</label>
+                <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="text" id="name" name="name"
+                    required value="{{.Name}}">
+                <div class="text-red-500">{{.NameError}}</div>
+            </div>
+            <div class="flex justify-between gap-2">
+                <div class="flex flex-col gap-1 w-full">
+                    <label for="address">Address</label>
+                    <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="text" id="address"
+                        name="address" required value="{{.Address}}">
+                    <div class="text-red-500">{{.AddressError}}</div>
+                </div>
+                <div class="flex flex-col gap-1 w-full">
+                    <label for="region">Region</label>
+                    <select class="border-black border rounded-xl px-2 py-1.5 shadow-lg" id="region" name="region"
+                        required>
+                        <option value="" disabled selected>Select Region</option>
+                        <option value="praha" {{if eq .Region "praha" }}selected{{end}}>Praha</option>
+                        <option value="stredocesky" {{if eq .Region "stredocesky" }}selected{{end}}>Středočeský</option>
+                        <option value="jihocesky" {{if eq .Region "jihocesky" }}selected{{end}}>Jihočeský</option>
+                        <option value="plzensky" {{if eq .Region "plzensky" }}selected{{end}}>Plzeňský</option>
+                        <option value="karlovarsky" {{if eq .Region "karlovarsky" }}selected{{end}}>Karlovarský</option>
+                        <option value="ustecky" {{if eq .Region "ustecky" }}selected{{end}}>Ústecký</option>
+                        <option value="liberecky" {{if eq .Region "liberecky" }}selected{{end}}>Liberecký</option>
+                        <option value="kralovehradecky" {{if eq .Region "kralovehradecky" }}selected{{end}}>
+                            Královéhradecký</option>
+                        <option value="pardubicky" {{if eq .Region "pardubicky" }}selected{{end}}>Pardubický</option>
+                        <option value="vysocina" {{if eq .Region "vysocina" }}selected{{end}}>Vysočina</option>
+                        <option value="jihomoravsky" {{if eq .Region "jihomoravsky" }}selected{{end}}>Jihomoravský
+                        </option>
+                        <option value="olomoucky" {{if eq .Region "olomoucky" }}selected{{end}}>Olomoucký</option>
+                        <option value="zlin" {{if eq .Region "zlin" }}selected{{end}}>Zlín</option>
+                        <option value="moravskoslezsky" {{if eq .Region "moravskoslezsky" }}selected{{end}}>
+                            Moravskoslezský</option>
+                    </select>
+                    <div class="text-red-500">{{.RegionError}}</div>
+                </div>
+            </div>
+            <div class="flex justify-between gap-2">
+                <div class="flex flex-col gap-1 w-full">
+                    <label for="date">Date</label>
+                    <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="date" id="date" name="date"
+                        required value="{{.Date}}" min="{{.MinDate}}">
+                    <div class="text-red-500">{{.DateError}}</div>
+                </div>
+                <div class="flex flex-col gap-1 w-full">
+                    <label for="time">Time</label>
+                    <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="time" id="time" name="time"
+                        required value="{{.Time}}">
+                    <div class="text-red-500">{{.TimeError}}</div>
+                </div>
+            </div>
+            <div class="flex flex-col gap-1">
+                <label for="header_image">Header image</label>
+                <input class="border-black border rounded-xl px-2 py-1 shadow-lg" type="file" id="header_image"
+                    name="header_image" accept="image/*">
+                <div class="text-red-500">{{.HeaderImageError}}</div>
+            </div>
+            <div class="flex flex-col gap-1">
+                <label for="description">Description</label>
+                <textarea class="border-black border rounded-xl px-2 py-1 shadow-lg" type="description" id="description"
+                    name="description" required>{{.Description}}</textarea>
+                <div class="text-red-500">{{.DescriptionError}}</div>
+            </div>
+            <button
+                class="mt-3 mx-auto bg-gray-600 hover:bg-gray-500 w-fit text-slate-100 px-5 py-2 rounded-3xl shadow-lg"
+                type="submit">
+                Create vajb
+            </button>
+        </form>
+    </div>
+</div>
+{{end}}
