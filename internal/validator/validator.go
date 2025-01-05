@@ -32,7 +32,7 @@ type User struct {
 
 type Vajb struct {
 	Name        string `validate:"required,min=3,max=32"`
-	Description string `validate:"required,min=1,max=256"`
+	Description string `validate:"required,min=1"`
 	Address     string `validate:"required,min=3,max=256"`
 	Region      string `validate:"oneof=praha plzensky karlovarsky ustecky liberecky kralovehradecky pardubicky vysocina jihomoravsky olomoucky zlinsky moravskoslezsky stredocesky jihocesky"`
 	Date        string `validate:"required,datetime=2006-01-02,notPast"`
