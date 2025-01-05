@@ -141,7 +141,7 @@ func (handlers *handlers) handleLogout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("HX-Redirect", "/login")
+	w.Header().Set("HX-Redirect", "/auth/login")
 }
 
 func (handlers *handlers) handleAuthPage(w http.ResponseWriter, r *http.Request) {
