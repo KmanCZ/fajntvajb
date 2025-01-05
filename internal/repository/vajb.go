@@ -49,6 +49,11 @@ func (vajbs *Vajbs) CreateVajb(creatorID int, name, description, address, region
 	return vajb, nil
 }
 
+func (vajbs *Vajbs) DeleteVajb(id int) error {
+	_, err := vajbs.db.Exec("DELETE FROM vajbs WHERE id = $1", id)
+	return err
+}
+
 func (vajbs *Vajbs) GetVajbByID(id int) (*Vajb, error) {
 	vajb := &Vajb{}
 	err := vajbs.db.Get(vajb, "SELECT * FROM vajbs WHERE id = $1", id)

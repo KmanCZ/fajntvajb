@@ -42,6 +42,7 @@ func New() (http.Handler, error) {
 	r.HandleFunc("GET /vajb/new", handlers.requireAuthMiddleware(handlers.handleNewVajbPage))
 	r.HandleFunc("POST /vajb/new", handlers.requireAuthMiddleware(handlers.handleNewVajb))
 	r.HandleFunc("GET /vajb/{id}", handlers.handleVajbPage)
+	r.HandleFunc("DELETE /vajb/{id}", handlers.requireAuthMiddleware(handlers.handleDeleteVajb))
 
 	r.HandleFunc("GET /", handlers.handleLandingPage)
 

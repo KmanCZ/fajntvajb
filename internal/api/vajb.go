@@ -4,6 +4,7 @@ import (
 	"fajntvajb/internal/files"
 	"fajntvajb/internal/repository"
 	"fajntvajb/internal/validator"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -161,4 +162,45 @@ func (handlers *handlers) handleVajbPage(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		handleWebError(w, err)
 	}
+}
+
+func (handlers *handlers) handleDeleteVajb(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		err = handlers.tmpl.Render(w, r, "404", nil)
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	vajb, err := handlers.db.Vajbs.GetVajbByID(id)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	if vajb == nil {
+		w.WriteHeader(http.StatusNotFound)
+		err = handlers.tmpl.Render(w, r, "404", nil)
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	user := r.Context().Value("user").(*repository.User)
+	if user.ID != vajb.CreatorID {
+		handleWebError(w, fmt.Errorf("user is not the creator of the vajb"))
+		return
+	}
+
+	err = handlers.db.Vajbs.DeleteVajb(id)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	w.Header().Set("HX-Redirect", "/vajb")
 }
