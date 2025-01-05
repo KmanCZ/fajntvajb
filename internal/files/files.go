@@ -115,3 +115,10 @@ func UploadVajbPic(vajbPicName string, vajbPicData []byte) error {
 	})
 	return err
 }
+
+func GetVajbPicPath(vajbPicName sql.NullString) string {
+	if vajbPicName.Valid {
+		return "https://localhost.localstack.cloud:4566/vajb-pictures/" + vajbPicName.String
+	}
+	return ""
+}

@@ -119,3 +119,46 @@ func (handlers *handlers) handleNewVajb(w http.ResponseWriter, r *http.Request) 
 
 	http.Redirect(w, r, "/vajb/"+strconv.Itoa(vajb.ID), http.StatusSeeOther)
 }
+
+func (handlers *handlers) handleVajbPage(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		err = handlers.tmpl.Render(w, r, "404", nil)
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	vajb, err := handlers.db.Vajbs.GetVajbByID(id)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	if vajb == nil {
+		w.WriteHeader(http.StatusNotFound)
+		err = handlers.tmpl.Render(w, r, "404", nil)
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+	user := r.Context().Value("user").(*repository.User)
+	var isOwner bool
+	if user != nil {
+		isOwner = user.ID == vajb.CreatorID
+	}
+
+	err = handlers.tmpl.Render(w, r, "vajb_page", map[string]any{
+		"Vajb":      vajb,
+		"ImagePath": files.GetVajbPicPath(vajb.HeaderImage),
+		"Date":      vajb.Date.Format("02. 01. 2006 15:04"),
+		"Region":    handlers.db.Vajbs.GetFullRegionName(vajb.Region),
+		"IsOwner":   isOwner,
+	})
+	if err != nil {
+		handleWebError(w, err)
+	}
+}

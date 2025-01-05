@@ -48,3 +48,50 @@ func (vajbs *Vajbs) CreateVajb(creatorID int, name, description, address, region
 
 	return vajb, nil
 }
+
+func (vajbs *Vajbs) GetVajbByID(id int) (*Vajb, error) {
+	vajb := &Vajb{}
+	err := vajbs.db.Get(vajb, "SELECT * FROM vajbs WHERE id = $1", id)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+
+	return vajb, nil
+}
+
+func (vajbs *Vajbs) GetFullRegionName(region string) string {
+	switch region {
+	case "praha":
+		return "Praha"
+	case "plzensky":
+		return "Plzeňský kraj"
+	case "karlovarsky":
+		return "Karlovarský kraj"
+	case "ustecky":
+		return "Ústecký kraj"
+	case "liberecky":
+		return "Liberecký kraj"
+	case "kralovehradecky":
+		return "Královéhradecký kraj"
+	case "pardubicky":
+		return "Pardubický kraj"
+	case "vysocina":
+		return "Vysočina"
+	case "jihomoravsky":
+		return "Jihomoravský kraj"
+	case "olomoucky":
+		return "Olomoucký kraj"
+	case "zlinsky":
+		return "Zlínský kraj"
+	case "moravskoslezsky":
+		return "Moravskoslezský kraj"
+	case "stredocesky":
+		return "Středočeský kraj"
+	case "jihocesky":
+		return "Jihočeský kraj"
+	}
+	return ""
+}
