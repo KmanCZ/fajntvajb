@@ -146,7 +146,12 @@ func (handlers *handlers) handleVajbPage(w http.ResponseWriter, r *http.Request)
 		}
 		return
 	}
-	user := r.Context().Value("user").(*repository.User)
+
+	var user *repository.User
+	if r.Context().Value("user") != nil {
+		user = r.Context().Value("user").(*repository.User)
+	}
+
 	var isOwner bool
 	if user != nil {
 		isOwner = user.ID == vajb.CreatorID
