@@ -158,11 +158,12 @@ func (handlers *handlers) handleVajbPage(w http.ResponseWriter, r *http.Request)
 	}
 
 	err = handlers.tmpl.Render(w, r, "vajb_page", map[string]any{
-		"Vajb":      vajb,
-		"ImagePath": files.GetVajbPicPath(vajb.HeaderImage),
-		"Date":      vajb.Date.Format("02. 01. 2006 15:04"),
-		"Region":    handlers.db.Vajbs.GetFullRegionName(vajb.Region),
-		"IsOwner":   isOwner,
+		"Vajb":            vajb,
+		"ImagePath":       files.GetVajbPicPath(vajb.HeaderImage),
+		"Date":            vajb.Date.Format("02. 01. 2006 15:04"),
+		"Region":          handlers.db.Vajbs.GetFullRegionName(vajb.Region),
+		"IsOwner":         isOwner,
+		"IsAuthenticated": user != nil,
 	})
 	if err != nil {
 		handleWebError(w, err)

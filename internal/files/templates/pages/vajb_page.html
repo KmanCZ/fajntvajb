@@ -31,9 +31,25 @@
                     </dialog>
                 </div>
                 {{else}}
-                <div class="flex gap-2">
-                    <a hx-post="/vajb/join/{{.Vajb.ID}}" href="#"
+                <div class="flex gap-2" x-data="">
+                    {{if .IsAuthenticated}}
+                    <a hx-post="/vajb/join/{{.vajb.id}}" href="#"
                         class="bg-gray-600 hover:bg-gray-500 text-slate-100 px-5 py-2 rounded-3xl shadow-lg">Join</a>
+                    {{else}}
+                    <a href="#" @click="$refs.dialog.showModal()"
+                        class="bg-gray-600 hover:bg-gray-500 text-slate-100 px-5 py-2 rounded-3xl shadow-lg">Join</a>
+                    <dialog x-ref="dialog" class="w-[20rem] bg-gray-50 p-5 rounded-xl shadow-lg">
+                        <h1 class="text-2xl text-center">
+                            To perform this action you need to be logged in!
+                        </h1>
+                        <div class="flex justify-center gap-2 mt-5">
+                            <button class="bg-gray-400 hover:bg-gray-300 text-slate-100 px-5 py-2 rounded-3xl shadow-lg"
+                                @click="$refs.dialog.close()">Cancel</button>
+                            <a href="/auth/login"
+                                class="bg-gray-600 hover:bg-gray-500 text-slate-100 px-5 py-2 rounded-3xl shadow-lg">Login</a>
+                        </div>
+                    </dialog>
+                    {{end}}
                 </div>
                 {{end}}
             </div>
