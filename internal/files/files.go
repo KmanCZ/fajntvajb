@@ -116,6 +116,14 @@ func UploadVajbPic(vajbPicName string, vajbPicData []byte) error {
 	return err
 }
 
+func DeleteVajbPic(vajbPicName string) error {
+	_, err := s3client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+		Bucket: aws.String("vajb-pictures"),
+		Key:    aws.String(vajbPicName),
+	})
+	return err
+}
+
 func GetVajbPicPath(vajbPicName sql.NullString) string {
 	if vajbPicName.Valid {
 		return "https://localhost.localstack.cloud:4566/vajb-pictures/" + vajbPicName.String

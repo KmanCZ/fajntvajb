@@ -2,6 +2,7 @@ package api
 
 import (
 	"fajntvajb/internal/files"
+	"fajntvajb/internal/logger"
 	"fajntvajb/internal/repository"
 	"fajntvajb/internal/validator"
 	"fmt"
@@ -49,20 +50,7 @@ func (handlers *handlers) handleNewVajb(w http.ResponseWriter, r *http.Request) 
 		validationErrors = handlers.validator.HandleVajbValidationError(err)
 	}
 
-	if len(validationErrors) > 0 {
-		validationErrors["Name"] = name
-		validationErrors["Description"] = description
-		validationErrors["Address"] = address
-		validationErrors["Region"] = region
-		validationErrors["Date"] = date
-		validationErrors["Time"] = timeF
-		validationErrors["MinDate"] = time.Now().Format("2006-01-02")
-		err = handlers.tmpl.Render(w, r, "vajb_form", validationErrors)
-		if err != nil {
-			handleWebError(w, err)
-		}
-		return
-	}
+	areErrors := len(validationErrors) > 0
 
 	validationErrors["Name"] = name
 	validationErrors["Description"] = description
@@ -71,6 +59,14 @@ func (handlers *handlers) handleNewVajb(w http.ResponseWriter, r *http.Request) 
 	validationErrors["Date"] = date
 	validationErrors["Time"] = timeF
 	validationErrors["MinDate"] = time.Now().Format("2006-01-02")
+
+	if areErrors {
+		err = handlers.tmpl.Render(w, r, "vajb_form", validationErrors)
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
 
 	image, _, err := r.FormFile("header_image")
 	if err != nil && err != http.ErrMissingFile {
@@ -229,6 +225,133 @@ func (handlers *handlers) handleVajbEditPage(w http.ResponseWriter, r *http.Requ
 	}
 }
 
+func (handlers *handlers) handleEditVajb(w http.ResponseWriter, r *http.Request) {
+	log := logger.Get()
+	log.Info().Msg("Edit Vajb")
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		err = handlers.tmpl.Render(w, r, "404", nil)
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	originalVajb, err := handlers.db.Vajbs.GetVajbByID(id)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	err = r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	name := r.Form.Get("name")
+	description := r.Form.Get("description")
+	address := r.Form.Get("address")
+	region := r.Form.Get("region")
+	date := r.Form.Get("date")
+	timeF := r.Form.Get("time")
+	deleteCurrentImage := r.Form.Get("delete_header_image")
+
+	err = handlers.validator.ValidateVajb(&validator.Vajb{
+		Name:        name,
+		Description: description,
+		Address:     address,
+		Region:      region,
+		Date:        date,
+		Time:        timeF,
+	})
+	validationErrors := make(map[string]any)
+	if err != nil {
+		validationErrors = handlers.validator.HandleVajbValidationError(err)
+	}
+
+	areErrors := len(validationErrors) > 0
+
+	validationErrors["Name"] = name
+	validationErrors["Description"] = description
+	validationErrors["Address"] = address
+	validationErrors["Region"] = region
+	validationErrors["Date"] = date
+	validationErrors["Time"] = timeF
+	validationErrors["MinDate"] = time.Now().Format("2006-01-02")
+	validationErrors["Edit"] = true
+	validationErrors["ID"] = id
+	validationErrors["HasImage"] = originalVajb.HeaderImage.Valid
+	validationErrors["ImagePath"] = files.GetVajbPicPath(originalVajb.HeaderImage)
+
+	if areErrors {
+		err = handlers.tmpl.Render(w, r, "vajb_form", validationErrors)
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	image, _, err := r.FormFile("header_image")
+	if err != nil && err != http.ErrMissingFile {
+		validationErrors["HeaderImageError"] = "Failed to upload image"
+		err = handlers.tmpl.Render(w, r, "vajb_form", validationErrors)
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	imgId := originalVajb.HeaderImage.String
+	if originalVajb.HeaderImage.Valid && (deleteCurrentImage != "" || image != nil) {
+		log.Info().Str("img", originalVajb.HeaderImage.String).Msg("Delete current image")
+		err = files.DeleteVajbPic(originalVajb.HeaderImage.String)
+		if err != nil {
+			handleWebError(w, err)
+			return
+		}
+		imgId = ""
+	}
+
+	if image != nil {
+		defer image.Close()
+		imageBytes, err := io.ReadAll(image)
+		if err != nil {
+			validationErrors["HeaderImageError"] = "Failed to upload image"
+			err = handlers.tmpl.Render(w, r, "vajb_form", validationErrors)
+			if err != nil {
+				handleWebError(w, err)
+			}
+			return
+		}
+		imgId = uuid.New().String()
+		err = files.UploadVajbPic(imgId, imageBytes)
+		if err != nil {
+			validationErrors["HeaderImageError"] = "Failed to upload image"
+			err = handlers.tmpl.Render(w, r, "vajb_form", validationErrors)
+			if err != nil {
+				handleWebError(w, err)
+			}
+			return
+		}
+	}
+
+	user := r.Context().Value("user").(*repository.User)
+	finalDate, err := time.Parse("2006-01-02 15:04", date+" "+timeF)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+	err = handlers.db.Vajbs.UpdateVajb(originalVajb.ID, user.ID, name, description, address, region, imgId, finalDate)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	http.Redirect(w, r, "/vajb/"+strconv.Itoa(originalVajb.ID), http.StatusSeeOther)
+}
+
 func (handlers *handlers) handleDeleteVajb(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
@@ -259,6 +382,14 @@ func (handlers *handlers) handleDeleteVajb(w http.ResponseWriter, r *http.Reques
 	if user.ID != vajb.CreatorID {
 		handleWebError(w, fmt.Errorf("user is not the creator of the vajb"))
 		return
+	}
+
+	if vajb.HeaderImage.Valid {
+		err = files.DeleteVajbPic(vajb.HeaderImage.String)
+		if err != nil {
+			handleWebError(w, err)
+			return
+		}
 	}
 
 	err = handlers.db.Vajbs.DeleteVajb(id)

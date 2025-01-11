@@ -54,6 +54,15 @@ func (vajbs *Vajbs) DeleteVajb(id int) error {
 	return err
 }
 
+func (vajbs *Vajbs) UpdateVajb(id, creatorID int, name, description, address, region, headerImage string, date time.Time) error {
+	var headerImageNull sql.NullString
+	if headerImage != "" {
+		headerImageNull = sql.NullString{String: headerImage, Valid: true}
+	}
+	_, err := vajbs.db.Exec(`UPDATE vajbs SET creator_id = $1, name = $2, description = $3, address = $4, region = $5, date = $6, header_image = $7 WHERE id = $8`, creatorID, name, description, address, region, date, headerImageNull, id)
+	return err
+}
+
 func (vajbs *Vajbs) GetVajbByID(id int) (*Vajb, error) {
 	vajb := &Vajb{}
 	err := vajbs.db.Get(vajb, "SELECT * FROM vajbs WHERE id = $1", id)
