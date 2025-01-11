@@ -170,6 +170,65 @@ func (handlers *handlers) handleVajbPage(w http.ResponseWriter, r *http.Request)
 	}
 }
 
+func (handlers *handlers) handleVajbEditPage(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		err = handlers.tmpl.Render(w, r, "404", nil)
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	vajb, err := handlers.db.Vajbs.GetVajbByID(id)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	if vajb == nil {
+		w.WriteHeader(http.StatusNotFound)
+		err = handlers.tmpl.Render(w, r, "404", nil)
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	var user *repository.User
+	if r.Context().Value("user") != nil {
+		user = r.Context().Value("user").(*repository.User)
+	}
+
+	var isOwner bool
+	if user != nil {
+		isOwner = user.ID == vajb.CreatorID
+	}
+
+	if !isOwner {
+		http.Redirect(w, r, "/vajb/"+strconv.Itoa(vajb.ID), http.StatusSeeOther)
+		return
+	}
+
+	err = handlers.tmpl.Render(w, r, "vajb_form", map[string]any{
+		"ID":          vajb.ID,
+		"Name":        vajb.Name,
+		"Description": vajb.Description,
+		"Address":     vajb.Address,
+		"Region":      vajb.Region,
+		"Date":        vajb.Date.Format("2006-01-02"),
+		"Time":        vajb.Date.Format("15:04"),
+		"MinDate":     time.Now().Format("2006-01-02"),
+		"ImagePath":   files.GetVajbPicPath(vajb.HeaderImage),
+		"HasImage":    vajb.HeaderImage.Valid,
+		"Edit":        true,
+	})
+	if err != nil {
+		handleWebError(w, err)
+	}
+}
+
 func (handlers *handlers) handleDeleteVajb(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
