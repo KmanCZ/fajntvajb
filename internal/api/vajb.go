@@ -164,6 +164,11 @@ func (handlers *handlers) handleVajbPage(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	for i := 0; i < len(participants); i++ {
+		participants[i].ProfilePic.String = files.GetProfilePicPath(participants[i].ProfilePic)
+		participants[i].ProfilePic.Valid = true
+	}
+
 	err = handlers.tmpl.Render(w, r, "vajb_page", map[string]any{
 		"Vajb":            vajb,
 		"ImagePath":       files.GetVajbPicPath(vajb.HeaderImage),
