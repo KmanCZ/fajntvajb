@@ -2,7 +2,6 @@ package api
 
 import (
 	"fajntvajb/internal/files"
-	"fajntvajb/internal/logger"
 	"fajntvajb/internal/repository"
 	"fajntvajb/internal/validator"
 	"fmt"
@@ -226,8 +225,6 @@ func (handlers *handlers) handleVajbEditPage(w http.ResponseWriter, r *http.Requ
 }
 
 func (handlers *handlers) handleEditVajb(w http.ResponseWriter, r *http.Request) {
-	log := logger.Get()
-	log.Info().Msg("Edit Vajb")
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -305,7 +302,6 @@ func (handlers *handlers) handleEditVajb(w http.ResponseWriter, r *http.Request)
 
 	imgId := originalVajb.HeaderImage.String
 	if originalVajb.HeaderImage.Valid && (deleteCurrentImage != "" || image != nil) {
-		log.Info().Str("img", originalVajb.HeaderImage.String).Msg("Delete current image")
 		err = files.DeleteVajbPic(originalVajb.HeaderImage.String)
 		if err != nil {
 			handleWebError(w, err)
