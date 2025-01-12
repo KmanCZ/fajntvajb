@@ -81,6 +81,11 @@ func (vajbs *Vajbs) JoinVajb(id, userId int) error {
 	return err
 }
 
+func (vajbs *Vajbs) UnjoinVajb(id, userId int) error {
+	_, err := vajbs.db.Exec(`DELETE FROM joined_vajbs WHERE user_id = $1 AND vajb_id = $2`, userId, id)
+	return err
+}
+
 func (vajbs *Vajbs) GetIsJoinedToVajb(id, userId int) (bool, error) {
 	var res bool
 	err := vajbs.db.Get(&res, "SELECT COUNT(*) > 0 FROM joined_vajbs WHERE user_id = $1 AND vajb_id = $2", userId, id)

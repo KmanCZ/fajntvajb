@@ -424,3 +424,24 @@ func (handlers *handlers) handleJoinVajb(w http.ResponseWriter, r *http.Request)
 
 	http.Redirect(w, r, "/vajb/"+strconv.Itoa(id), http.StatusSeeOther)
 }
+
+func (handlers *handlers) handleUnjoinVajb(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		err = handlers.tmpl.Render(w, r, "404", nil)
+		if err != nil {
+			handleWebError(w, err)
+		}
+		return
+	}
+
+	user := r.Context().Value("user").(*repository.User)
+	err = handlers.db.Vajbs.UnjoinVajb(id, user.ID)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	http.Redirect(w, r, "/vajb/"+strconv.Itoa(id), http.StatusSeeOther)
+}
