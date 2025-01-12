@@ -76,6 +76,11 @@ func (vajbs *Vajbs) GetVajbByID(id int) (*Vajb, error) {
 	return vajb, nil
 }
 
+func (vajbs *Vajbs) JoinVajb(id, userId int) error {
+	_, err := vajbs.db.Exec(`INSERT INTO joined_vajbs (user_id, vajb_id) VALUES ($1, $2)`, userId, id)
+	return err
+}
+
 func (vajbs *Vajbs) GetFullRegionName(region string) string {
 	switch region {
 	case "praha":

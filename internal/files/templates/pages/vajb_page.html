@@ -33,7 +33,7 @@
                 {{else}}
                 <div class="flex gap-2" x-data="">
                     {{if .IsAuthenticated}}
-                    <a hx-post="/vajb/join/{{.vajb.id}}" href="#"
+                    <a href="/vajb/{{.Vajb.ID}}/join"
                         class="bg-gray-600 hover:bg-gray-500 text-slate-100 px-5 py-2 rounded-3xl shadow-lg">Join</a>
                     {{else}}
                     <a href="#" @click="$refs.dialog.showModal()"
