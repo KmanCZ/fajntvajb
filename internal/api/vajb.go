@@ -158,6 +158,12 @@ func (handlers *handlers) handleVajbPage(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	participants, err := handlers.db.Vajbs.GetVajbParticipants(id)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
 	err = handlers.tmpl.Render(w, r, "vajb_page", map[string]any{
 		"Vajb":            vajb,
 		"ImagePath":       files.GetVajbPicPath(vajb.HeaderImage),
@@ -166,6 +172,7 @@ func (handlers *handlers) handleVajbPage(w http.ResponseWriter, r *http.Request)
 		"IsOwner":         isOwner,
 		"IsAuthenticated": user != nil,
 		"IsJoined":        isJoined,
+		"Participants":    participants,
 	})
 	if err != nil {
 		handleWebError(w, err)

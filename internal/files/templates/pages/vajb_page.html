@@ -67,7 +67,7 @@
                     <p class="text-lg truncate"><i class="fa-solid fa-calendar"></i> {{.Date}}</p>
                     <p class="text-lg truncate"><i class="fa-solid fa-user-group"></i>
                         {{if .Participants}}
-                        {{.Participants}} participants
+                        {{len .Participants}} participant{{if gt (len .Participants) 1}}s{{end}}
                         {{else}}
                         No participants yet
                         {{end}}

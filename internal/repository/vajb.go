@@ -92,6 +92,13 @@ func (vajbs *Vajbs) GetIsJoinedToVajb(id, userId int) (bool, error) {
 	return res, err
 }
 
+func (vajbs *Vajbs) GetVajbParticipants(id int) ([]User, error) {
+	users := []User{}
+
+	err := vajbs.db.Select(&users, `SELECT users.id, users.display_name, users.profile_image FROM users, joined_vajbs WHERE users.id = joined_vajbs.user_id AND joined_vajbs.vajb_id = $1`, id)
+	return users, err
+}
+
 func (vajbs *Vajbs) GetFullRegionName(region string) string {
 	switch region {
 	case "praha":
