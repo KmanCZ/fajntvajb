@@ -40,7 +40,7 @@ func (vajbs *Vajbs) CreateVajb(creatorID int, name, description, address, region
 	}
 
 	var id int
-	err := vajbs.db.QueryRow(`INSERT INTO vajbs (creator_id, name, description, address, region, date, header_image) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`, creatorID, name, description, address, region, date, headerImage).Scan(&id)
+	err := vajbs.db.QueryRow(`INSERT INTO vajbs (creator_id, name, description, address, region, date, header_image) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`, creatorID, name, description, address, region, date, vajb.HeaderImage).Scan(&id)
 	if err != nil {
 		return nil, err
 	}
