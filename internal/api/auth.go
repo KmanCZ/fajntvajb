@@ -145,10 +145,27 @@ func (handlers *handlers) handleLogout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (handlers *handlers) handleAuthPage(w http.ResponseWriter, r *http.Request) {
-	err := handlers.tmpl.Render(w, r, "auth", map[string]any{
-		"Name": "test",
-	})
+	user := r.Context().Value("user").(*repository.User)
 
+	myVajbs, err := handlers.db.Vajbs.GetMyVajbs(user.ID)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	joinedVajbs, err := handlers.db.Vajbs.GetJoinedVajbs(user.ID)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	log := logger.Get()
+	log.Info().Int("myVajbs", len(myVajbs)).Int("joinedVajbs", len(joinedVajbs)).Msg("Vajbs")
+
+	err = handlers.tmpl.Render(w, r, "auth", map[string]any{
+		"MyVajbs":     myVajbs,
+		"JoinedVajbs": joinedVajbs,
+	})
 	if err != nil {
 		handleWebError(w, err)
 	}

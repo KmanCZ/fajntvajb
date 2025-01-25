@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fajntvajb/internal/files"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -97,6 +98,44 @@ func (vajbs *Vajbs) GetVajbParticipants(id int) ([]User, error) {
 
 	err := vajbs.db.Select(&users, `SELECT users.id, users.display_name, users.profile_image FROM users, joined_vajbs WHERE users.id = joined_vajbs.user_id AND joined_vajbs.vajb_id = $1`, id)
 	return users, err
+}
+
+func (vajbs *Vajbs) GetMyVajbs(userID int) ([]Vajb, error) {
+	res := []Vajb{}
+	err := vajbs.db.Select(&res, "SELECT * FROM vajbs WHERE creator_id = $1 AND date >= CURRENT_DATE", userID)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := 0; i < len(res); i++ {
+		vajb := &res[i]
+		if vajb.HeaderImage.Valid {
+			vajb.HeaderImage.String = files.GetVajbPicPath(vajb.HeaderImage)
+		}
+
+		vajb.Region = vajbs.GetFullRegionName(vajb.Region)
+	}
+
+	return res, nil
+}
+
+func (vajbs *Vajbs) GetJoinedVajbs(userID int) ([]Vajb, error) {
+	res := []Vajb{}
+	err := vajbs.db.Select(&res, "SELECT vajbs.* FROM vajbs, joined_vajbs WHERE vajbs.id = joined_vajbs.vajb_id AND joined_vajbs.user_id = $1 AND vajbs.date >= CURRENT_DATE", userID)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := 0; i < len(res); i++ {
+		vajb := &res[i]
+		if vajb.HeaderImage.Valid {
+			vajb.HeaderImage.String = files.GetVajbPicPath(vajb.HeaderImage)
+		}
+
+		vajb.Region = vajbs.GetFullRegionName(vajb.Region)
+	}
+
+	return res, nil
 }
 
 func (vajbs *Vajbs) GetFullRegionName(region string) string {
