@@ -82,6 +82,13 @@ func New() (*DB, error) {
 		return nil, err
 	}
 
+	if os.Getenv("SEED") != "" {
+		if err := seed(db); err != nil {
+			log.Fatal().Err(err).Msg("Failed to seed database")
+			return nil, err
+		}
+	}
+
 	res := DB{
 		Users: repository.NewUsers(db),
 		Vajbs: repository.NewVajbs(db),
