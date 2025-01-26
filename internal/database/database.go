@@ -39,6 +39,8 @@ func getConnectionString() (string, error) {
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
 	sslmode := os.Getenv("DB_SSLMODE")
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
 	if user == "" {
 		return "", fmt.Errorf("DB_USER is not set")
 	}
@@ -51,7 +53,13 @@ func getConnectionString() (string, error) {
 	if sslmode == "" {
 		sslmode = "disable"
 	}
-	return fmt.Sprintf("user=%s password=%s dbname=%s sslmode=%s", user, password, dbname, sslmode), nil
+	if host == "" {
+		host = "localhost"
+	}
+	if port == "" {
+		port = "5432"
+	}
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", user, password, host, port, dbname, sslmode), nil
 }
 
 func New() (*DB, error) {
