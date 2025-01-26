@@ -52,7 +52,7 @@ func New() (http.Handler, error) {
 	r.HandleFunc("GET /", handlers.handleLandingPage)
 
 	// Define API routes
-	r.HandleFunc("GET /api/test", handlers.handleHTMXTest)
+	r.HandleFunc("GET /api/vajb", handlers.handleVajbExplore)
 
 	return handlers.authenticateMiddleware(r), nil
 }

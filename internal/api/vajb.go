@@ -494,6 +494,8 @@ func (handlers *handlers) handleVajbExplorePage(w http.ResponseWriter, r *http.R
 		"Name":   name,
 		"From":   from,
 		"To":     to,
+		"Num":    num,
+		"Offset": off + number,
 		"Vajbs":  vajbs,
 	})
 	if err != nil {
