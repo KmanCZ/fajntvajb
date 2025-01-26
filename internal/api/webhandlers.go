@@ -1,9 +1,10 @@
 package api
 
 import (
+	"net/http"
+
 	"fajntvajb/internal/files"
 	"fajntvajb/internal/logger"
-	"net/http"
 )
 
 func (handlers *handlers) handleLandingPage(w http.ResponseWriter, r *http.Request) {

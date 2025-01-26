@@ -1,12 +1,13 @@
 package api
 
 import (
+	"net/http"
+	"os"
+
 	"fajntvajb/internal/database"
 	"fajntvajb/internal/files/templates"
 	"fajntvajb/internal/logger"
 	"fajntvajb/internal/validator"
-	"net/http"
-	"os"
 
 	"github.com/gorilla/sessions"
 )

@@ -1,10 +1,11 @@
 package api
 
 import (
-	"fajntvajb/internal/logger"
 	"net/http"
 	"strconv"
 	"time"
+
+	"fajntvajb/internal/logger"
 )
 
 func (handlers *handlers) handleVajbExplore(w http.ResponseWriter, r *http.Request) {

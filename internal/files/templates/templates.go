@@ -1,11 +1,12 @@
 package templates
 
 import (
+	"html/template"
+	"net/http"
+
 	"fajntvajb/internal/files"
 	"fajntvajb/internal/logger"
 	"fajntvajb/internal/repository"
-	"html/template"
-	"net/http"
 )
 
 type Template struct {
@@ -61,7 +62,6 @@ func (t *Template) Render(w http.ResponseWriter, r *http.Request, name string, d
 	}
 
 	return tmpl.ExecuteTemplate(w, name+".html", data)
-
 }
 
 func (t *Template) RenderComponent(w http.ResponseWriter, name string, data map[string]any) error {

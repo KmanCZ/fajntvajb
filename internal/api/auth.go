@@ -1,12 +1,13 @@
 package api
 
 import (
+	"io"
+	"net/http"
+
 	"fajntvajb/internal/files"
 	"fajntvajb/internal/logger"
 	"fajntvajb/internal/repository"
 	"fajntvajb/internal/validator"
-	"io"
-	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -59,7 +60,6 @@ func (handlers *handlers) handleRegister(w http.ResponseWriter, r *http.Request)
 		validationErrors["DisplayName"] = displayName
 
 		err = handlers.tmpl.Render(w, r, "register", validationErrors)
-
 		if err != nil {
 			handleWebError(w, err)
 		}

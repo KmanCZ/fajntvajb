@@ -2,11 +2,13 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
+	"os"
+
 	"fajntvajb/internal/files"
 	"fajntvajb/internal/logger"
-	"fmt"
+
 	_ "github.com/lib/pq"
-	"os"
 
 	"fajntvajb/internal/repository"
 	"github.com/jmoiron/sqlx"

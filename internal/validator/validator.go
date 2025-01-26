@@ -44,7 +44,7 @@ func (v *Validator) ValidateUser(user *User) error {
 }
 
 func (v *Validator) HandleUserValidationError(err error) map[string]any {
-	var res = make(map[string]any)
+	res := make(map[string]any)
 	for _, err := range err.(validator.ValidationErrors) {
 		builder := strings.Builder{}
 		switch err.Tag() {
@@ -105,7 +105,7 @@ func (v *Validator) ValidateVajb(vajb *Vajb) error {
 }
 
 func (v *Validator) HandleVajbValidationError(err error) map[string]any {
-	var res = make(map[string]any)
+	res := make(map[string]any)
 	for _, err := range err.(validator.ValidationErrors) {
 		builder := strings.Builder{}
 		switch err.Tag() {

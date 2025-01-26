@@ -1,10 +1,11 @@
 package api
 
 import (
-	"fajntvajb/internal/files"
-	"fajntvajb/internal/logger"
 	"io/fs"
 	"net/http"
+
+	"fajntvajb/internal/files"
+	"fajntvajb/internal/logger"
 )
 
 func New() (http.Handler, error) {

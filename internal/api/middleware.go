@@ -2,9 +2,10 @@ package api
 
 import (
 	"context"
-	"fajntvajb/internal/repository"
 	"net/http"
 	"strings"
+
+	"fajntvajb/internal/repository"
 )
 
 func (handlers *handlers) authenticateMiddleware(next http.Handler) http.Handler {

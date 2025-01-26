@@ -1,11 +1,12 @@
 package main
 
 import (
+	"net/http"
+	"os"
+
 	"fajntvajb/internal/api"
 	"fajntvajb/internal/files"
 	"fajntvajb/internal/logger"
-	"net/http"
-	"os"
 
 	"github.com/joho/godotenv"
 )

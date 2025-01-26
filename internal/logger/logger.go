@@ -12,8 +12,10 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var once sync.Once
-var log zerolog.Logger
+var (
+	once sync.Once
+	log  zerolog.Logger
+)
 
 func Get() zerolog.Logger {
 	once.Do(func() {
