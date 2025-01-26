@@ -476,7 +476,7 @@ func (handlers *handlers) handleVajbExplorePage(w http.ResponseWriter, r *http.R
 	}
 	number, err := strconv.Atoi(num)
 	if err != nil {
-		number = 10
+		number = 9
 	}
 	off, err := strconv.Atoi(offset)
 	if err != nil {
