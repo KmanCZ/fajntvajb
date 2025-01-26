@@ -5,11 +5,13 @@ import (
 	"context"
 	"database/sql"
 	"embed"
+	"errors"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 //go:embed static/* templates/*
@@ -40,7 +42,45 @@ func InitS3Client() error {
 		o.BaseEndpoint = aws.String(awsEndpoint)
 	})
 
+	buckets := []string{"profile-pictures", "vajb-pictures"}
+	for _, bucket := range buckets {
+		exists, err := checkBucketExists(s3client, bucket)
+		if err != nil {
+			return err
+		}
+		if !exists {
+			err = createBucket(bucket, awsRegion)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
+}
+
+func checkBucketExists(client *s3.Client, bucketName string) (bool, error) {
+	_, err := client.HeadBucket(context.TODO(), &s3.HeadBucketInput{
+		Bucket: aws.String(bucketName),
+	})
+	if err != nil {
+		var notFound *types.NotFound
+		if errors.As(err, &notFound) {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
+}
+
+func createBucket(bucketName, region string) error {
+	_, err := s3client.CreateBucket(context.TODO(), &s3.CreateBucketInput{
+		Bucket: aws.String(bucketName),
+		CreateBucketConfiguration: &types.CreateBucketConfiguration{
+			LocationConstraint: types.BucketLocationConstraint(region),
+		},
+	})
+	return err
 }
 
 func UploadProfilePic(profilePicName string, profilePicData []byte) error {
@@ -65,4 +105,28 @@ func GetProfilePicPath(profilePicName sql.NullString) string {
 		return "https://localhost.localstack.cloud:4566/profile-pictures/" + profilePicName.String
 	}
 	return "/static/img/blank-profile-picture.png"
+}
+
+func UploadVajbPic(vajbPicName string, vajbPicData []byte) error {
+	_, err := s3client.PutObject(context.TODO(), &s3.PutObjectInput{
+		Bucket: aws.String("vajb-pictures"),
+		Key:    aws.String(vajbPicName),
+		Body:   bytes.NewReader(vajbPicData),
+	})
+	return err
+}
+
+func DeleteVajbPic(vajbPicName string) error {
+	_, err := s3client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+		Bucket: aws.String("vajb-pictures"),
+		Key:    aws.String(vajbPicName),
+	})
+	return err
+}
+
+func GetVajbPicPath(vajbPicName sql.NullString) string {
+	if vajbPicName.Valid {
+		return "https://localhost.localstack.cloud:4566/vajb-pictures/" + vajbPicName.String
+	}
+	return ""
 }

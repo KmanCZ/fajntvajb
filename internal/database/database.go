@@ -15,6 +15,7 @@ import (
 
 type DB struct {
 	Users *repository.Users
+	Vajbs *repository.Vajbs
 }
 
 func migrate(db *sql.DB) error {
@@ -75,6 +76,7 @@ func New() (*DB, error) {
 
 	res := DB{
 		Users: repository.NewUsers(db),
+		Vajbs: repository.NewVajbs(db),
 	}
 
 	return &res, nil

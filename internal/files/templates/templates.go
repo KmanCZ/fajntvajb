@@ -9,19 +9,27 @@ import (
 )
 
 type Template struct {
-	templates *template.Template
+	templates  *template.Template
+	components *template.Template
 }
 
 func New() (*Template, error) {
 	log := logger.Get()
-	t, err := template.New("layout.html").ParseFS(files.Files, "templates/layouts/*.html")
+	t, err := template.New("layout.html").ParseFS(files.Files, "templates/layouts/*.html", "templates/components/*.html")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse layout")
 		return nil, err
 	}
 
+	components, err := template.ParseFS(files.Files, "templates/components/*.html")
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to parse components")
+		return nil, err
+	}
+
 	return &Template{
-		templates: t,
+		templates:  t,
+		components: components,
 	}, nil
 }
 
@@ -54,4 +62,8 @@ func (t *Template) Render(w http.ResponseWriter, r *http.Request, name string, d
 
 	return tmpl.ExecuteTemplate(w, name+".html", data)
 
+}
+
+func (t *Template) RenderComponent(w http.ResponseWriter, name string, data map[string]any) error {
+	return t.components.ExecuteTemplate(w, name+".html", data)
 }

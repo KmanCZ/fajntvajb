@@ -4,10 +4,16 @@ import (
 	"context"
 	"fajntvajb/internal/repository"
 	"net/http"
+	"strings"
 )
 
 func (handlers *handlers) authenticateMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, "/static") {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		session, _ := handlers.session.Get(r, "session")
 		userId, ok := session.Values["userId"].(int)
 		if !ok {

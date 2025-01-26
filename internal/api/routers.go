@@ -38,10 +38,21 @@ func New() (http.Handler, error) {
 	r.HandleFunc("POST /auth/profile/password", handlers.requireAuthMiddleware(handlers.handlePasswordEdit))
 	r.HandleFunc("POST /auth/profile/profilepicture", handlers.requireAuthMiddleware(handlers.handleProfilePictureEdit))
 	r.HandleFunc("POST /auth/profile/delete", handlers.requireAuthMiddleware(handlers.handleDeleteAccount))
+
+	r.HandleFunc("GET /vajb", handlers.handleVajbExplorePage)
+	r.HandleFunc("GET /vajb/new", handlers.requireAuthMiddleware(handlers.handleNewVajbPage))
+	r.HandleFunc("POST /vajb/new", handlers.requireAuthMiddleware(handlers.handleNewVajb))
+	r.HandleFunc("GET /vajb/{id}", handlers.handleVajbPage)
+	r.HandleFunc("DELETE /vajb/{id}", handlers.requireAuthMiddleware(handlers.handleDeleteVajb))
+	r.HandleFunc("GET /vajb/{id}/edit", handlers.requireAuthMiddleware(handlers.handleVajbEditPage))
+	r.HandleFunc("POST /vajb/{id}/edit", handlers.requireAuthMiddleware(handlers.handleEditVajb))
+	r.HandleFunc("GET /vajb/{id}/join", handlers.requireAuthMiddleware(handlers.handleJoinVajb))
+	r.HandleFunc("GET /vajb/{id}/unjoin", handlers.requireAuthMiddleware(handlers.handleUnjoinVajb))
+
 	r.HandleFunc("GET /", handlers.handleLandingPage)
 
 	// Define API routes
-	r.HandleFunc("GET /api/test", handlers.handleHTMXTest)
+	r.HandleFunc("GET /api/vajb", handlers.handleVajbExplore)
 
 	return handlers.authenticateMiddleware(r), nil
 }
