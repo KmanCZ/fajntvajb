@@ -457,3 +457,46 @@ func (handlers *handlers) handleUnjoinVajb(w http.ResponseWriter, r *http.Reques
 
 	http.Redirect(w, r, "/vajb/"+strconv.Itoa(id), http.StatusSeeOther)
 }
+
+func (handlers *handlers) handleVajbExplorePage(w http.ResponseWriter, r *http.Request) {
+	region := r.URL.Query().Get("region")
+	name := r.URL.Query().Get("name")
+	from := r.URL.Query().Get("from")
+	to := r.URL.Query().Get("to")
+	num := r.URL.Query().Get("num")
+	offset := r.URL.Query().Get("offset")
+
+	toDate, err := time.Parse("2006-01-02", to)
+	if err != nil {
+		toDate = time.Time{}
+	}
+	fromDate, err := time.Parse("2006-01-02", from)
+	if err != nil {
+		fromDate = time.Time{}
+	}
+	number, err := strconv.Atoi(num)
+	if err != nil {
+		number = 10
+	}
+	off, err := strconv.Atoi(offset)
+	if err != nil {
+		off = 0
+	}
+
+	vajbs, err := handlers.db.Vajbs.GetVajbs(name, region, fromDate, toDate, number, off)
+	if err != nil {
+		handleWebError(w, err)
+		return
+	}
+
+	err = handlers.tmpl.Render(w, r, "explore", map[string]any{
+		"Region": region,
+		"Name":   name,
+		"From":   from,
+		"To":     to,
+		"Vajbs":  vajbs,
+	})
+	if err != nil {
+		handleWebError(w, err)
+	}
+}

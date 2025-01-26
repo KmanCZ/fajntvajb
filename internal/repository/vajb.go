@@ -1,8 +1,11 @@
 package repository
 
 import (
+	"bytes"
 	"database/sql"
 	"fajntvajb/internal/files"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -98,6 +101,80 @@ func (vajbs *Vajbs) GetVajbParticipants(id int) ([]User, error) {
 
 	err := vajbs.db.Select(&users, `SELECT users.id, users.display_name, users.profile_image FROM users, joined_vajbs WHERE users.id = joined_vajbs.user_id AND joined_vajbs.vajb_id = $1`, id)
 	return users, err
+}
+
+func (vajbs *Vajbs) GetVajbs(name, region string, from, to time.Time, number, offset int) ([]Vajb, error) {
+	var query bytes.Buffer
+	var dateSet bool
+	var values []interface{}
+	query.WriteString("SELECT * FROM vajbs WHERE ")
+	if name != "" {
+		name = strings.ToLower(name)
+		name = "%" + name + "%"
+		query.WriteString("LOWER(name) LIKE $")
+		query.WriteString(strconv.Itoa(len(values) + 1))
+		values = append(values, name)
+	}
+	if region != "" {
+		if len(values) > 0 {
+			query.WriteString(" AND ")
+		}
+		query.WriteString("region = $")
+		query.WriteString(strconv.Itoa(len(values) + 1))
+		values = append(values, region)
+	}
+	if !from.IsZero() {
+		if len(values) > 0 {
+			query.WriteString(" AND ")
+		}
+		query.WriteString("date >= $")
+		query.WriteString(strconv.Itoa(len(values) + 1))
+		dateSet = true
+		values = append(values, from)
+	}
+	if !to.IsZero() {
+		if len(values) > 0 {
+			query.WriteString(" AND ")
+		}
+		query.WriteString("date <= $")
+		query.WriteString(strconv.Itoa(len(values) + 1))
+		dateSet = true
+		values = append(values, to)
+	}
+	if !dateSet {
+		if len(values) > 0 {
+			query.WriteString(" AND ")
+		}
+		query.WriteString("date >= CURRENT_DATE")
+	}
+	query.WriteString(" ORDER BY date")
+	if number > 0 {
+		query.WriteString(" LIMIT $")
+		query.WriteString(strconv.Itoa(len(values) + 1))
+		values = append(values, number)
+	}
+	if offset > 0 {
+		query.WriteString(" OFFSET $")
+		query.WriteString(strconv.Itoa(len(values) + 1))
+		values = append(values, offset)
+	}
+
+	res := []Vajb{}
+	err := vajbs.db.Select(&res, query.String(), values...)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := 0; i < len(res); i++ {
+		vajb := &res[i]
+		if vajb.HeaderImage.Valid {
+			vajb.HeaderImage.String = files.GetVajbPicPath(vajb.HeaderImage)
+		}
+
+		vajb.Region = vajbs.GetFullRegionName(vajb.Region)
+	}
+
+	return res, nil
 }
 
 func (vajbs *Vajbs) GetMyVajbs(userID int) ([]Vajb, error) {

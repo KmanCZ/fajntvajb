@@ -1,0 +1,66 @@
+{{template "layout.html" .}}
+
+{{define "title"}}Explore{{end}}
+
+{{define "content"}}
+<h1 class="text-4xl my-4 text-center">Explore Vajbs</h1>
+
+<form action="/vajb" method="GET" class="flex flex-col items-center w-full py-2 bg-gray-100"
+    x-data="{ showMore: {{if or .Region .From .To}} true {{else}} false {{end}} }">
+    <div class="flex flex-col gap-2">
+        <div class="flex gap-3">
+            <div class="flex flex-col gap-1 w-[40rem]">
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" class="border-black border rounded-xl px-2 py-1 shadow-lg"
+                    value="{{.Name}}">
+            </div>
+            <div class="flex items-end">
+                <button type="submit"
+                    class="bg-gray-600 hover:bg-gray-500 text-slate-100 px-5 py-2 rounded-3xl shadow-lg">Filter</button>
+            </div>
+            <div class="flex items-end w-32">
+                <a href="#" @click="showMore = !showMore"
+                    x-text="showMore ?  'Show less filters' : 'Show more filters'"></a>
+            </div>
+        </div>
+        <div class=" flex gap-10" x-show="showMore">
+            <div class="flex flex-col gap-1">
+                <label for="region">Region</label>
+                <select class="border-black border rounded-xl px-2 py-1.5 shadow-lg" id="region" name="region">
+                    <option value="" selected>Any Region</option>
+                    <option value="praha" {{if eq .Region "praha" }}selected{{end}}>Praha</option>
+                    <option value="stredocesky" {{if eq .Region "stredocesky" }}selected{{end}}>Středočeský</option>
+                    <option value="jihocesky" {{if eq .Region "jihocesky" }}selected{{end}}>Jihočeský</option>
+                    <option value="plzensky" {{if eq .Region "plzensky" }}selected{{end}}>Plzeňský</option>
+                    <option value="karlovarsky" {{if eq .Region "karlovarsky" }}selected{{end}}>Karlovarský</option>
+                    <option value="ustecky" {{if eq .Region "ustecky" }}selected{{end}}>Ústecký</option>
+                    <option value="liberecky" {{if eq .Region "liberecky" }}selected{{end}}>Liberecký</option>
+                    <option value="kralovehradecky" {{if eq .Region "kralovehradecky" }}selected{{end}}>
+                        Královéhradecký</option>
+                    <option value="pardubicky" {{if eq .Region "pardubicky" }}selected{{end}}>Pardubický</option>
+                    <option value="vysocina" {{if eq .Region "vysocina" }}selected{{end}}>Vysočina</option>
+                    <option value="jihomoravsky" {{if eq .Region "jihomoravsky" }}selected{{end}}>Jihomoravský
+                    </option>
+                    <option value="olomoucky" {{if eq .Region "olomoucky" }}selected{{end}}>Olomoucký</option>
+                    <option value="zlin" {{if eq .Region "zlin" }}selected{{end}}>Zlín</option>
+                    <option value="moravskoslezsky" {{if eq .Region "moravskoslezsky" }}selected{{end}}>
+                        Moravskoslezský</option>
+                </select>
+            </div>
+            <div class="flex flex-col gap-1">
+                <label for="from">From</label>
+                <input type="date" name="from" id="from" class="border-black border rounded-xl px-2 py-1 shadow-lg"
+                    value="{{.From}}">
+            </div>
+            <div class="flex flex-col gap-1">
+                <label for="to">To</label>
+                <input type="date" name="to" id="to" class="border-black border rounded-xl px-2 py-1 shadow-lg"
+                    value="{{.To}}">
+            </div>
+        </div>
+    </div>
+</form>
+
+{{template "vajb_list.html" .}}
+
+{{end}}

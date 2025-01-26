@@ -39,6 +39,7 @@ func New() (http.Handler, error) {
 	r.HandleFunc("POST /auth/profile/profilepicture", handlers.requireAuthMiddleware(handlers.handleProfilePictureEdit))
 	r.HandleFunc("POST /auth/profile/delete", handlers.requireAuthMiddleware(handlers.handleDeleteAccount))
 
+	r.HandleFunc("GET /vajb", handlers.handleVajbExplorePage)
 	r.HandleFunc("GET /vajb/new", handlers.requireAuthMiddleware(handlers.handleNewVajbPage))
 	r.HandleFunc("POST /vajb/new", handlers.requireAuthMiddleware(handlers.handleNewVajb))
 	r.HandleFunc("GET /vajb/{id}", handlers.handleVajbPage)

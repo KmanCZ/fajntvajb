@@ -14,7 +14,7 @@ type Template struct {
 
 func New() (*Template, error) {
 	log := logger.Get()
-	t, err := template.New("layout.html").ParseFS(files.Files, "templates/layouts/*.html")
+	t, err := template.New("layout.html").ParseFS(files.Files, "templates/layouts/*.html", "templates/components/*.html")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse layout")
 		return nil, err
