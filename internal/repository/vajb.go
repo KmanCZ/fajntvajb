@@ -102,7 +102,7 @@ func (vajbs *Vajbs) GetVajbParticipants(id int) ([]User, error) {
 
 func (vajbs *Vajbs) GetMyVajbs(userID int) ([]Vajb, error) {
 	res := []Vajb{}
-	err := vajbs.db.Select(&res, "SELECT * FROM vajbs WHERE creator_id = $1 AND date >= CURRENT_DATE", userID)
+	err := vajbs.db.Select(&res, "SELECT * FROM vajbs WHERE creator_id = $1 AND date >= CURRENT_DATE ORDER BY date", userID)
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +121,7 @@ func (vajbs *Vajbs) GetMyVajbs(userID int) ([]Vajb, error) {
 
 func (vajbs *Vajbs) GetJoinedVajbs(userID int) ([]Vajb, error) {
 	res := []Vajb{}
-	err := vajbs.db.Select(&res, "SELECT vajbs.* FROM vajbs, joined_vajbs WHERE vajbs.id = joined_vajbs.vajb_id AND joined_vajbs.user_id = $1 AND vajbs.date >= CURRENT_DATE", userID)
+	err := vajbs.db.Select(&res, "SELECT vajbs.* FROM vajbs, joined_vajbs WHERE vajbs.id = joined_vajbs.vajb_id AND joined_vajbs.user_id = $1 AND vajbs.date >= CURRENT_DATE ORDER BY vajbs.date", userID)
 	if err != nil {
 		return nil, err
 	}
