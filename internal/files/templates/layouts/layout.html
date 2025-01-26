@@ -11,7 +11,7 @@
     <title>fajntvajb - {{block "title" .}}{{end}}</title>
 </head>
 
-<body class="h-screen flex flex-col justify-between [&:has(dialog[open])]:overflow-hidden">
+<body class="min-h-screen h-full flex flex-col justify-between [&:has(dialog[open])]:overflow-hidden">
     {{template "navbar.html" .}}
     <main class="flex-1">
         {{block "content" .}}{{end}}
