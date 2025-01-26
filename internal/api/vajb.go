@@ -152,10 +152,13 @@ func (handlers *handlers) handleVajbPage(w http.ResponseWriter, r *http.Request)
 		isOwner = user.ID == vajb.CreatorID
 	}
 
-	isJoined, err := handlers.db.Vajbs.GetIsJoinedToVajb(id, user.ID)
-	if err != nil {
-		handleWebError(w, err)
-		return
+	var isJoined bool
+	if user != nil {
+		isJoined, err = handlers.db.Vajbs.GetIsJoinedToVajb(id, user.ID)
+		if err != nil {
+			handleWebError(w, err)
+			return
+		}
 	}
 
 	participants, err := handlers.db.Vajbs.GetVajbParticipants(id)
